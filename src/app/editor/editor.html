@@ -1,0 +1,77 @@
+<div class="toolbar">
+  <div class="toolbar-section">
+    <label for="candidateSelect">Select Candidate:</label>
+    <select id="candidateSelect" #candidateSelect (change)="selectCandidate($event)">
+      <option value="">-- Select Candidate --</option>
+      <option *ngFor="let c of candidates" [value]="c.id">
+        {{ c.name }} - {{ c.position }}
+      </option>
+    </select>
+  </div>
+
+  <div class="toolbar-section">
+    <button (click)="openTemplateSelector()" class="btn btn-info">Choose Template</button>
+    <button (click)="preview()" class="btn btn-primary">Preview</button>
+    <button (click)="saveTemplate()" class="btn btn-success">Save Template</button>
+    <button (click)="generatePDF()" class="btn btn-warning">Generate PDF</button>
+  </div>
+</div>
+
+<!-- Template Selector Modal -->
+<div class="modal-overlay" *ngIf="showTemplateModal" (click)="closeTemplateSelector()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>Choose Offer Letter Template</h3>
+      <button class="modal-close" (click)="closeTemplateSelector()">×</button>
+    </div>
+
+    <div class="template-grid">
+      <div
+        class="template-card"
+        *ngFor="let template of predefinedTemplates"
+        (click)="selectTemplate(template)"
+        [class.selected]="selectedTemplatePreview?.id === template.id"
+      >
+        <div class="template-thumbnail">
+          <span class="thumbnail-emoji">{{ template.thumbnail }}</span>
+        </div>
+        <div class="template-info">
+          <h4>{{ template.name }}</h4>
+          <p class="template-category">{{ template.category }}</p>
+          <p class="template-description">{{ template.description }}</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn btn-secondary" (click)="closeTemplateSelector()">Cancel</button>
+      <button
+        class="btn btn-primary"
+        (click)="applySelectedTemplate()"
+        [disabled]="!selectedTemplatePreview"
+      >
+        Apply Template
+      </button>
+    </div>
+  </div>
+</div>
+
+<div class="editor-layout">
+  <div class="editor-panel">
+    <div class="panel-header">
+      <h3>Offer Letter Editor</h3>
+      <small>Drag blocks from the left panel to build your template</small>
+    </div>
+    <div id="gjs" class="editor-canvas"></div>
+  </div>
+
+  <div class="preview-panel" *ngIf="previewHtml">
+    <div class="panel-header">
+      <h3>Preview</h3>
+      <button (click)="previewHtml = ''" class="btn btn-sm btn-outline-secondary">Close</button>
+    </div>
+    <div class="preview-content">
+      <iframe [srcdoc]="previewHtml" width="100%" height="100%"></iframe>
+    </div>
+  </div>
+</div>
