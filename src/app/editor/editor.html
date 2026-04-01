@@ -1,60 +1,27 @@
 <div class="toolbar">
   <div class="toolbar-section">
-    <label for="candidateSelect">Select Candidate:</label>
-    <select id="candidateSelect" #candidateSelect (change)="selectCandidate($event)">
-      <option value="">-- Select Candidate --</option>
-      <option *ngFor="let c of candidates" [value]="c.id">
-        {{ c.name }} - {{ c.position }}
-      </option>
-    </select>
+    <span class="selected-employee-info" *ngIf="selectedCandidate">
+      Selected Employee: <strong>{{ selectedCandidate.candidateName }}</strong> - {{ selectedCandidate.position }}
+    </span>
   </div>
 
   <div class="toolbar-section">
-    <button (click)="openTemplateSelector()" class="btn btn-info">Choose Template</button>
-    <button (click)="preview()" class="btn btn-primary">Preview</button>
-    <button (click)="saveTemplate()" class="btn btn-success">Save Template</button>
-    <button (click)="generatePDF()" class="btn btn-warning">Generate PDF</button>
+    <!-- <button (click)="openTemplateSelector()" class="btn btn-info">Choose Template</button> -->
+    <button (click)="preview()" class="btn btn-info">Preview</button>
+    <button (click)="saveOfferLetter()" class="btn btn-success" [disabled]="!selectedCandidate">Save Offer Letter</button>
+    <button (click)="saveTemplate()" class="btn btn-warning" [disabled]="!selectedCandidate">Save As New Template</button>
   </div>
 </div>
 
 <!-- Template Selector Modal -->
-<div class="modal-overlay" *ngIf="showTemplateModal" (click)="closeTemplateSelector()">
-  <div class="modal-content" (click)="$event.stopPropagation()">
-    <div class="modal-header">
-      <h3>Choose Offer Letter Template</h3>
-      <button class="modal-close" (click)="closeTemplateSelector()">×</button>
-    </div>
-
-    <div class="template-grid">
-      <div
-        class="template-card"
-        *ngFor="let template of predefinedTemplates"
-        (click)="selectTemplate(template)"
-        [class.selected]="selectedTemplatePreview?.id === template.id"
-      >
-        <div class="template-thumbnail">
-          <span class="thumbnail-emoji">{{ template.thumbnail }}</span>
-        </div>
-        <div class="template-info">
-          <h4>{{ template.name }}</h4>
-          <p class="template-category">{{ template.category }}</p>
-          <p class="template-description">{{ template.description }}</p>
-        </div>
-      </div>
-    </div>
-
-    <div class="modal-actions">
-      <button class="btn btn-secondary" (click)="closeTemplateSelector()">Cancel</button>
-      <button
-        class="btn btn-primary"
-        (click)="applySelectedTemplate()"
-        [disabled]="!selectedTemplatePreview"
-      >
-        Apply Template
-      </button>
-    </div>
-  </div>
-</div>
+<app-template-selector-modal
+  [isVisible]="showTemplateModal"
+  [templates]="predefinedTemplates"
+  [selectedTemplate]="selectedTemplatePreview"
+  (templateSelected)="onTemplateSelected($event)"
+  (templateApplied)="onTemplateApplied($event)"
+  (modalClosed)="closeTemplateSelector()"
+></app-template-selector-modal>
 
 <div class="editor-layout">
   <div class="editor-panel">

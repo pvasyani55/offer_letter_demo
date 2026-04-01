@@ -1,0 +1,399 @@
+<div class="employees-container">
+  <div class="header">
+    <h2>Employee Management</h2>
+    <button class="btn btn-primary" (click)="openAddModal()">Add Employee</button>
+  </div>
+
+  <div class="search-bar">
+    <input 
+      type="text" 
+      [(ngModel)]="searchQuery" 
+      placeholder="Search employees..." 
+      class="search-input"
+      (keyup.enter)="onSearch()"
+    >
+    <button class="btn btn-secondary" (click)="onSearch()">Search</button>
+  </div>
+
+  <div class="table-container" *ngIf="!isLoading; else loading">
+    <table class="employees-table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Candidate ID</th>
+          <th>Position</th>
+          <th>Job Role</th>
+          <th>Total Salary</th>
+          <th>Joining Date</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let employee of employees">
+          <td>{{ employee.name }}</td>
+          <td>{{ employee.candidateId }}</td>
+          <td>{{ employee.position }}</td>
+          <td>{{ employee.jobRole }}</td>
+          <td>{{ getSalaryDisplay(employee.totalSalary) }}</td>
+          <td>{{ formatDate(employee.joiningDate) }}</td>
+          <td>
+            <span class="status" [class.active]="employee.isActive" [class.inactive]="!employee.isActive">
+              {{ employee.isActive ? 'Active' : 'Inactive' }}
+            </span>
+          </td>
+          <td>
+            <button class="btn btn-sm btn-info" (click)="openEditModal(employee)">Edit</button>
+            <button class="btn btn-sm btn-success" (click)="createOfferLetter(employee)">Create Offer Letter</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="pagination" *ngIf="pagination && pagination.totalPages > 1">
+      <button 
+        class="btn btn-sm" 
+        [disabled]="currentPage === 1" 
+        (click)="onPageChange(currentPage - 1)"
+      >
+        Previous
+      </button>
+      
+      <span *ngFor="let page of totalPages" class="page-number">
+        <button 
+          *ngIf="page !== '...'"
+          class="btn btn-sm" 
+          [class.active]="page === currentPage"
+          (click)="onPageChange(page)"
+        >
+          {{ page }}
+        </button>
+        <span *ngIf="page === '...'" class="ellipsis">...</span>
+      </span>
+      
+      <button 
+        class="btn btn-sm" 
+        [disabled]="currentPage === pagination.totalPages" 
+        (click)="onPageChange(currentPage + 1)"
+      >
+        Next
+      </button>
+    </div>
+
+    <div class="no-data" *ngIf="employees.length === 0">
+      <p>No employees found.</p>
+    </div>
+  </div>
+
+  <ng-template #loading>
+    <div class="loading">
+      <p>Loading employees...</p>
+    </div>
+  </ng-template>
+
+  <!-- Add Employee Modal -->
+  <div class="modal" *ngIf="showAddModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Add New Employee</h3>
+        <button class="close-btn" (click)="closeAddModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Name *</label>
+          <input type="text" [(ngModel)]="newEmployee.name" required>
+        </div>
+        <div class="form-group">
+          <label>Candidate Name *</label>
+          <input type="text" [(ngModel)]="newEmployee.candidateName" required>
+        </div>
+        <div class="form-group">
+          <label>Candidate Address *</label>
+          <textarea [(ngModel)]="newEmployee.candidateAddress" required></textarea>
+        </div>
+        <div class="form-group">
+          <label>Position *</label>
+          <input type="text" [(ngModel)]="newEmployee.position" required>
+        </div>
+        <div class="form-group">
+          <label>Job Role *</label>
+          <input type="text" [(ngModel)]="newEmployee.jobRole" required>
+        </div>
+        <div class="form-group">
+          <label>Salary *</label>
+          <input type="text" [(ngModel)]="newEmployee.salary" required>
+        </div>
+        <div class="form-group">
+          <label>Basic Salary *</label>
+          <input type="text" [(ngModel)]="newEmployee.basicSalary" required>
+        </div>
+        <div class="form-group">
+          <label>Basic Monthly *</label>
+          <input type="text" [(ngModel)]="newEmployee.basicMonthly" required>
+        </div>
+        <div class="form-group">
+          <label>HRA *</label>
+          <input type="text" [(ngModel)]="newEmployee.hra" required>
+        </div>
+        <div class="form-group">
+          <label>HRA Monthly *</label>
+          <input type="text" [(ngModel)]="newEmployee.hraMonthly" required>
+        </div>
+        <div class="form-group">
+          <label>Conveyance *</label>
+          <input type="text" [(ngModel)]="newEmployee.conveyance" required>
+        </div>
+        <div class="form-group">
+          <label>Conveyance Monthly *</label>
+          <input type="text" [(ngModel)]="newEmployee.conveyanceMonthly" required>
+        </div>
+        <div class="form-group">
+          <label>Medical *</label>
+          <input type="text" [(ngModel)]="newEmployee.medical" required>
+        </div>
+        <div class="form-group">
+          <label>LTA *</label>
+          <input type="text" [(ngModel)]="newEmployee.lta" required>
+        </div>
+        <div class="form-group">
+          <label>Other Benefits *</label>
+          <input type="text" [(ngModel)]="newEmployee.otherBenefits" required>
+        </div>
+        <div class="form-group">
+          <label>Other Monthly *</label>
+          <input type="text" [(ngModel)]="newEmployee.otherMonthly" required>
+        </div>
+        <div class="form-group">
+          <label>Total Salary *</label>
+          <input type="text" [(ngModel)]="newEmployee.totalSalary" required>
+        </div>
+        <div class="form-group">
+          <label>Total Monthly *</label>
+          <input type="text" [(ngModel)]="newEmployee.totalMonthly" required>
+        </div>
+        <div class="form-group">
+          <label>Joining Date *</label>
+          <input type="date" [(ngModel)]="newEmployee.joiningDate" required>
+        </div>
+        <div class="form-group">
+          <label>Offer Expiry Date *</label>
+          <input type="date" [(ngModel)]="newEmployee.offerExpiryDate" required>
+        </div>
+        <div class="form-group">
+          <label>Current Date *</label>
+          <input type="date" [(ngModel)]="newEmployee.currentDate" required>
+        </div>
+        <div class="form-group">
+          <label>Year *</label>
+          <input type="text" [(ngModel)]="newEmployee.year" required>
+        </div>
+        <div class="form-group">
+          <label>Candidate ID *</label>
+          <input type="text" [(ngModel)]="newEmployee.candidateId" required>
+        </div>
+        <div class="form-group">
+          <label>Company Name *</label>
+          <input type="text" [(ngModel)]="newEmployee.companyName" required>
+        </div>
+        <div class="form-group">
+          <label>Company Address *</label>
+          <textarea [(ngModel)]="newEmployee.companyAddress" required></textarea>
+        </div>
+        <div class="form-group">
+          <label>Company Initials *</label>
+          <input type="text" [(ngModel)]="newEmployee.companyInitials" required>
+        </div>
+        <div class="form-group">
+          <label>Company Tagline *</label>
+          <input type="text" [(ngModel)]="newEmployee.companyTagline" required>
+        </div>
+        <div class="form-group">
+          <label>Company Mission *</label>
+          <textarea [(ngModel)]="newEmployee.companyMission" required></textarea>
+        </div>
+        <div class="form-group">
+          <label>HR Name *</label>
+          <input type="text" [(ngModel)]="newEmployee.hrName" required>
+        </div>
+        <div class="form-group">
+          <label>HR Position *</label>
+          <input type="text" [(ngModel)]="newEmployee.hrPosition" required>
+        </div>
+        <div class="form-group">
+          <label>Reporting Manager *</label>
+          <input type="text" [(ngModel)]="newEmployee.reportingManager" required>
+        </div>
+        <div class="form-group">
+          <label>Work Location *</label>
+          <input type="text" [(ngModel)]="newEmployee.workLocation" required>
+        </div>
+        <div class="form-group">
+          <label>Is Active</label>
+          <input type="checkbox" [(ngModel)]="newEmployee.isActive">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" (click)="closeAddModal()">Cancel</button>
+        <button class="btn btn-primary" (click)="addEmployee()">Add Employee</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Edit Employee Modal -->
+  <div class="modal" *ngIf="showEditModal && selectedEmployee">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Edit Employee</h3>
+        <button class="close-btn" (click)="closeEditModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Name *</label>
+          <input type="text" [(ngModel)]="selectedEmployee.name" required>
+        </div>
+        <div class="form-group">
+          <label>Candidate Name *</label>
+          <input type="text" [(ngModel)]="selectedEmployee.candidateName" required>
+        </div>
+        <div class="form-group">
+          <label>Candidate Address *</label>
+          <textarea [(ngModel)]="selectedEmployee.candidateAddress" required></textarea>
+        </div>
+        <div class="form-group">
+          <label>Position *</label>
+          <input type="text" [(ngModel)]="selectedEmployee.position" required>
+        </div>
+        <div class="form-group">
+          <label>Job Role *</label>
+          <input type="text" [(ngModel)]="selectedEmployee.jobRole" required>
+        </div>
+        <div class="form-group">
+          <label>Salary *</label>
+          <input type="text" [(ngModel)]="selectedEmployee.salary" required>
+        </div>
+        <div class="form-group">
+          <label>Basic Salary *</label>
+          <input type="text" [(ngModel)]="selectedEmployee.basicSalary" required>
+        </div>
+        <div class="form-group">
+          <label>Basic Monthly *</label>
+          <input type="text" [(ngModel)]="selectedEmployee.basicMonthly" required>
+        </div>
+        <div class="form-group">
+          <label>HRA *</label>
+          <input type="text" [(ngModel)]="selectedEmployee.hra" required>
+        </div>
+        <div class="form-group">
+          <label>HRA Monthly *</label>
+          <input type="text" [(ngModel)]="selectedEmployee.hraMonthly" required>
+        </div>
+        <div class="form-group">
+          <label>Conveyance *</label>
+          <input type="text" [(ngModel)]="selectedEmployee.conveyance" required>
+        </div>
+        <div class="form-group">
+          <label>Conveyance Monthly *</label>
+          <input type="text" [(ngModel)]="selectedEmployee.conveyanceMonthly" required>
+        </div>
+        <div class="form-group">
+          <label>Medical *</label>
+          <input type="text" [(ngModel)]="selectedEmployee.medical" required>
+        </div>
+        <div class="form-group">
+          <label>LTA *</label>
+          <input type="text" [(ngModel)]="selectedEmployee.lta" required>
+        </div>
+        <div class="form-group">
+          <label>Other Benefits *</label>
+          <input type="text" [(ngModel)]="selectedEmployee.otherBenefits" required>
+        </div>
+        <div class="form-group">
+          <label>Other Monthly *</label>
+          <input type="text" [(ngModel)]="selectedEmployee.otherMonthly" required>
+        </div>
+        <div class="form-group">
+          <label>Total Salary *</label>
+          <input type="text" [(ngModel)]="selectedEmployee.totalSalary" required>
+        </div>
+        <div class="form-group">
+          <label>Total Monthly *</label>
+          <input type="text" [(ngModel)]="selectedEmployee.totalMonthly" required>
+        </div>
+        <div class="form-group">
+          <label>Joining Date *</label>
+          <input type="date" [(ngModel)]="selectedEmployee.joiningDate" required>
+        </div>
+        <div class="form-group">
+          <label>Offer Expiry Date *</label>
+          <input type="date" [(ngModel)]="selectedEmployee.offerExpiryDate" required>
+        </div>
+        <div class="form-group">
+          <label>Current Date *</label>
+          <input type="date" [(ngModel)]="selectedEmployee.currentDate" required>
+        </div>
+        <div class="form-group">
+          <label>Year *</label>
+          <input type="text" [(ngModel)]="selectedEmployee.year" required>
+        </div>
+        <div class="form-group">
+          <label>Candidate ID *</label>
+          <input type="text" [(ngModel)]="selectedEmployee.candidateId" required>
+        </div>
+        <div class="form-group">
+          <label>Company Name *</label>
+          <input type="text" [(ngModel)]="selectedEmployee.companyName" required>
+        </div>
+        <div class="form-group">
+          <label>Company Address *</label>
+          <textarea [(ngModel)]="selectedEmployee.companyAddress" required></textarea>
+        </div>
+        <div class="form-group">
+          <label>Company Initials *</label>
+          <input type="text" [(ngModel)]="selectedEmployee.companyInitials" required>
+        </div>
+        <div class="form-group">
+          <label>Company Tagline *</label>
+          <input type="text" [(ngModel)]="selectedEmployee.companyTagline" required>
+        </div>
+        <div class="form-group">
+          <label>Company Mission *</label>
+          <textarea [(ngModel)]="selectedEmployee.companyMission" required></textarea>
+        </div>
+        <div class="form-group">
+          <label>HR Name *</label>
+          <input type="text" [(ngModel)]="selectedEmployee.hrName" required>
+        </div>
+        <div class="form-group">
+          <label>HR Position *</label>
+          <input type="text" [(ngModel)]="selectedEmployee.hrPosition" required>
+        </div>
+        <div class="form-group">
+          <label>Reporting Manager *</label>
+          <input type="text" [(ngModel)]="selectedEmployee.reportingManager" required>
+        </div>
+        <div class="form-group">
+          <label>Work Location *</label>
+          <input type="text" [(ngModel)]="selectedEmployee.workLocation" required>
+        </div>
+        <div class="form-group">
+          <label>Is Active</label>
+          <input type="checkbox" [(ngModel)]="selectedEmployee.isActive">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" (click)="closeEditModal()">Cancel</button>
+        <button class="btn btn-primary" (click)="updateEmployee()">Update Employee</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Template Selector Modal -->
+  <app-template-selector-modal
+    [isVisible]="showTemplateModal"
+    [templates]="predefinedTemplates"
+    [selectedTemplate]="selectedTemplate"
+    (templateSelected)="onTemplateSelected($event)"
+    (templateApplied)="onTemplateApplied($event)"
+    (modalClosed)="closeTemplateModal()"
+  ></app-template-selector-modal>
+</div>

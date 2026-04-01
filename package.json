@@ -19,6 +19,7 @@
     "@angular/router": "^21.2.0",
     "grapesjs": "^0.22.14",
     "grapesjs-preset-webpage": "^1.0.3",
+    "grapesjs-table": "^1.0.8",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0"
   },

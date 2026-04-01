@@ -1,0 +1,38 @@
+<!-- Template Selector Modal -->
+<div class="modal-overlay" *ngIf="isVisible" (click)="onOverlayClick($event)">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>Choose Offer Letter Template</h3>
+      <button class="modal-close" (click)="onCloseModal()">×</button>
+    </div>
+
+    <div class="template-grid">
+      <div
+        class="template-card"
+        *ngFor="let template of templates"
+        (click)="onTemplateClick(template)"
+        [class.selected]="selectedTemplate?.id === template.id"
+      >
+        <div class="template-thumbnail">
+          <span class="thumbnail-emoji">{{ getThumbnailEmoji(template) }}</span>
+        </div>
+        <div class="template-info">
+          <h4>{{ template.name }}</h4>
+          <p class="template-category">{{ getCategory(template) }}</p>
+          <p class="template-description">{{ template.description || 'No description available' }}</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn btn-secondary" (click)="onCloseModal()">Cancel</button>
+      <button
+        class="btn btn-primary"
+        (click)="onApplyTemplate()"
+        [disabled]="!selectedTemplate"
+      >
+        Apply Template
+      </button>
+    </div>
+  </div>
+</div>

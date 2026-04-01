@@ -1,257 +1,158 @@
 import { CommonModule } from '@angular/common';
-import { HttpClient } from '@angular/common/http';
-import { Component, OnInit } from '@angular/core';
+import { EmployeeService, Employee } from '../../services/employee.service';
+import { TemplateService, Template } from '../../services/template.service';
+import { OfferLetterService, OfferLetter } from '../../services/offer-letter.service';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { TemplateSelectorModalComponent } from '../template-selector-modal/template-selector-modal.component';
 import grapesjs from 'grapesjs';
 
 @Component({
   selector: 'app-editor',
-  imports: [CommonModule],
+  imports: [CommonModule, TemplateSelectorModalComponent],
   templateUrl: './editor.html',
   styleUrl: './editor.scss',
 })
 export class Editor implements OnInit {
   editor: any;
-  candidates = [
-    {
-      id: 1,
-      name: 'Payal Vasyani',
-      candidateName: 'Payal Vasyani',
-      candidateAddress: '123 Main Street, Mumbai, Maharashtra 400001',
-      position: 'Frontend Developer',
-      jobRole: 'Frontend Developer',
-      salary: '8,00,000',
-      basicSalary: '6,00,000',
-      basicMonthly: '50,000',
-      hra: '1,20,000',
-      hraMonthly: '10,000',
-      conveyance: '19,200',
-      conveyanceMonthly: '1,600',
-      medical: '15,000',
-      lta: '1,00,000',
-      otherBenefits: '1,65,200',
-      otherMonthly: '13,767',
-      totalSalary: '8,00,000',
-      totalMonthly: '66,667',
-      joiningDate: '01 April 2026',
-      offerExpiryDate: '15 April 2026',
-      currentDate: '30 March 2026',
-      year: '2026',
-      candidateId: '001',
-      companyName: 'Tech Solutions Inc.',
-      companyAddress: '123 Business Street, Tech City, TC 12345',
-      companyInitials: 'TS',
-      companyTagline: 'Innovating Tomorrow\'s Technology',
-      companyMission: 'Build cutting-edge solutions that transform businesses',
-      hrName: 'John Smith',
-      hrPosition: 'HR Manager',
-      reportingManager: 'Sarah Johnson',
-      workLocation: 'Mumbai Office'
-    },
-    {
-      id: 2,
-      name: 'Rahul Sharma',
-      candidateName: 'Rahul Sharma',
-      candidateAddress: '456 Park Avenue, Delhi, Delhi 110001',
-      position: 'Backend Developer',
-      jobRole: 'Backend Developer',
-      salary: '10,00,000',
-      basicSalary: '7,50,000',
-      basicMonthly: '62,500',
-      hra: '1,50,000',
-      hraMonthly: '12,500',
-      conveyance: '19,200',
-      conveyanceMonthly: '1,600',
-      medical: '15,000',
-      lta: '1,00,000',
-      otherBenefits: '1,65,200',
-      otherMonthly: '13,767',
-      totalSalary: '10,00,000',
-      totalMonthly: '83,333',
-      joiningDate: '15 April 2026',
-      offerExpiryDate: '30 April 2026',
-      currentDate: '30 March 2026',
-      year: '2026',
-      candidateId: '002',
-      companyName: 'Tech Solutions Inc.',
-      companyAddress: '123 Business Street, Tech City, TC 12345',
-      companyInitials: 'TS',
-      companyTagline: 'Innovating Tomorrow\'s Technology',
-      companyMission: 'Build cutting-edge solutions that transform businesses',
-      hrName: 'John Smith',
-      hrPosition: 'HR Manager',
-      reportingManager: 'Mike Chen',
-      workLocation: 'Delhi Office'
-    }
-  ];
   selectedCandidate: any;
   previewHtml = '';
   savedTemplates: any[] = [];
-  predefinedTemplates: any[] = [];
+  predefinedTemplates: Template[] = [];
   showTemplateModal = false;
-  selectedTemplatePreview: any = null;
+  selectedTemplatePreview: Template | null = null;
+  candidates: any[] = [];
 
-  constructor(private http: HttpClient) {}
+  constructor(private employeeService: EmployeeService, private templateService: TemplateService, private offerLetterService: OfferLetterService, private route: ActivatedRoute, private router: Router, private cd: ChangeDetectorRef) {}
 
-  initPredefinedTemplates() {
-    this.predefinedTemplates = [
-      {
-        id: 1,
-        name: 'Classic Corporate',
-        description: 'Traditional professional layout with formal styling',
-        icon: '🏢',
-        thumbnailBg: 'linear-gradient(135deg, #2c3e50 0%, #34495e 100%)',
-        tags: ['Professional', 'Traditional', 'Corporate'],
-        previewHtml: `
-          <div class="offer-letter" style="font-family: 'Times New Roman', serif; font-size: 10px; padding: 15px; border: 1px solid #ddd;">
-            <div style="text-align: center; margin-bottom: 15px; border-bottom: 1px solid #333; padding-bottom: 10px;">
-              <h2 style="margin: 0; color: #2c3e50; font-size: 14px;">COMPANY NAME</h2>
-              <p style="margin: 5px 0; color: #666;">Offer of Employment</p>
-            </div>
-            <p style="margin: 8px 0;">Dear <strong>Candidate Name</strong>,</p>
-            <p style="margin: 8px 0; text-align: justify;">We are pleased to extend a formal offer of employment for the position of <strong>Job Role</strong> at our company.</p>
-            <div style="margin: 15px 0; padding: 10px; background: #f9f9f9; border: 1px solid #ddd;">
-              <strong>Compensation:</strong> ₹500,000 per annum
-            </div>
-            <p style="margin: 8px 0;">Please sign and return this letter to accept this offer.</p>
-            <div style="margin-top: 20px; text-align: right;">
-              <p style="margin: 0;">Sincerely,<br><strong>HR Manager</strong></p>
-            </div>
-          </div>
-        `
-      },
-      {
-        id: 2,
-        name: 'Modern Minimal',
-        description: 'Clean, contemporary design with subtle gradients',
-        icon: '🎨',
-        thumbnailBg: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-        tags: ['Modern', 'Minimal', 'Clean'],
-        previewHtml: `
-          <div class="offer-letter" style="font-family: 'Segoe UI', sans-serif; font-size: 11px; padding: 20px; background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); border-radius: 8px;">
-            <div style="text-align: center; margin-bottom: 20px;">
-              <div style="width: 50px; height: 50px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 50%; margin: 0 auto 10px auto;"></div>
-              <h2 style="margin: 0; color: #333; font-size: 16px; font-weight: 300;">Company Name</h2>
-            </div>
-            <div style="display: flex; justify-content: space-between; margin-bottom: 15px; background: white; padding: 10px; border-radius: 6px;">
-              <div><strong>Position:</strong> Job Role</div>
-              <div><strong>Start Date:</strong> DD/MM/YYYY</div>
-            </div>
-            <p style="margin: 10px 0; color: #444;">Dear <strong>Candidate Name</strong>,</p>
-            <p style="margin: 10px 0; text-align: justify; color: #555;">We're excited to offer you the opportunity to join our team and contribute to our innovative projects.</p>
-            <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 15px; border-radius: 8px; text-align: center; margin: 15px 0;">
-              <div style="font-size: 12px; opacity: 0.9;">Annual Compensation</div>
-              <div style="font-size: 20px; font-weight: 600;">₹500,000</div>
-            </div>
-            <div style="text-align: center; margin-top: 20px;">
-              <p style="margin: 0; color: #666;">Best regards,<br><strong>HR Manager</strong></p>
-            </div>
-          </div>
-        `
-      },
-      {
-        id: 3,
-        name: 'Elegant Professional',
-        description: 'Sophisticated design with gold accents and formal typography',
-        icon: '👑',
-        thumbnailBg: 'linear-gradient(135deg, #8b4513 0%, #d4af37 100%)',
-        tags: ['Elegant', 'Sophisticated', 'Premium'],
-        previewHtml: `
-          <div class="offer-letter" style="font-family: 'Garamond', serif; font-size: 10px; padding: 20px; border: 2px solid #8b4513; border-radius: 4px;">
-            <div style="text-align: center; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 2px double #8b4513;">
-              <h2 style="margin: 0; color: #2f4f4f; font-size: 16px; font-weight: normal; letter-spacing: 1px;">COMPANY NAME</h2>
-              <p style="margin: 5px 0; color: #666; font-style: italic; font-size: 9px;">Excellence in Service</p>
-            </div>
-            <div style="display: flex; justify-content: space-between; margin-bottom: 15px; font-size: 8px;">
-              <div>Reference: EMP-001-2024</div>
-              <div>Date: DD/MM/YYYY</div>
-            </div>
-            <p style="margin: 10px 0; font-size: 11px;">Dear <strong>Candidate Name</strong>,</p>
-            <p style="margin: 10px 0; text-align: justify; text-indent: 20px; color: #333;">We are delighted to extend this formal offer of employment for the position of <strong>Job Role</strong> within our esteemed organization.</p>
-            <div style="margin: 15px 0; padding: 15px; background: #faf9f6; border: 1px solid #d4af37;">
-              <div style="text-align: center; margin-bottom: 10px; padding: 10px; background: linear-gradient(135deg, #d4af37 0%, #b8860b 100%); color: white; border-radius: 4px;">
-                <div style="font-size: 9px; opacity: 0.9;">Annual Gross Compensation</div>
-                <div style="font-size: 18px; font-weight: 600;">₹500,000</div>
-              </div>
-              <table style="width: 100%; border-collapse: collapse; font-size: 9px;">
-                <tr style="background: #2f4f4f; color: white;">
-                  <th style="border: 1px solid #d4af37; padding: 6px;">Component</th>
-                  <th style="border: 1px solid #d4af37; padding: 6px;">Monthly</th>
-                  <th style="border: 1px solid #d4af37; padding: 6px;">Annual</th>
-                </tr>
-                <tr><td style="border: 1px solid #d4af37; padding: 6px;">Basic Salary</td><td style="border: 1px solid #d4af37; padding: 6px;">₹35,000</td><td style="border: 1px solid #d4af37; padding: 6px;">₹420,000</td></tr>
-                <tr style="background: #faf9f6;"><td style="border: 1px solid #d4af37; padding: 6px;">HRA</td><td style="border: 1px solid #d4af37; padding: 6px;">₹17,500</td><td style="border: 1px solid #d4af37; padding: 6px;">₹210,000</td></tr>
-              </table>
-            </div>
-            <div style="text-align: center; margin-top: 25px;">
-              <p style="margin: 0; font-weight: 500;">Yours sincerely,</p>
-              <div style="width: 150px; height: 40px; border-bottom: 1px solid #2f4f4f; margin: 10px auto;"></div>
-              <p style="margin: 0; font-weight: 600;"><strong>HR Manager</strong></p>
-            </div>
-          </div>
-        `
-      },
-      {
-        id: 4,
-        name: 'Tech Startup',
-        description: 'Fun, energetic design perfect for modern tech companies',
-        icon: '🚀',
-        thumbnailBg: 'linear-gradient(135deg, #ff6b6b 0%, #4ecdc4 100%)',
-        tags: ['Tech', 'Startup', 'Modern'],
-        previewHtml: `
-          <div class="offer-letter" style="font-family: 'Inter', sans-serif; font-size: 11px; padding: 20px; background: linear-gradient(135deg, #ff6b6b 0%, #4ecdc4 100%); border-radius: 12px; color: white;">
-            <div style="text-align: center; margin-bottom: 20px;">
-              <div style="width: 60px; height: 60px; background: rgba(255,255,255,0.2); border-radius: 50%; margin: 0 auto 10px auto; display: flex; align-items: center; justify-content: center; font-size: 24px;">🚀</div>
-              <h2 style="margin: 0; font-size: 18px; font-weight: 700;">Company Name</h2>
-              <p style="margin: 5px 0; opacity: 0.9; font-size: 10px;">Building the future, one innovation at a time</p>
-            </div>
-            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 20px;">
-              <div style="background: rgba(255,255,255,0.1); padding: 10px; border-radius: 6px; text-align: center;">
-                <div style="font-size: 16px; margin-bottom: 5px;">🎯</div>
-                <div style="font-size: 9px; opacity: 0.8;">Position</div>
-                <div style="font-size: 12px; font-weight: 600;">Job Role</div>
-              </div>
-              <div style="background: rgba(255,255,255,0.1); padding: 10px; border-radius: 6px; text-align: center;">
-                <div style="font-size: 16px; margin-bottom: 5px;">💰</div>
-                <div style="font-size: 9px; opacity: 0.8;">Package</div>
-                <div style="font-size: 12px; font-weight: 600;">₹500,000</div>
-              </div>
-            </div>
-            <p style="margin: 15px 0; font-size: 12px;">Hey <strong>Candidate Name</strong>! 👋</p>
-            <p style="margin: 15px 0; text-align: justify; opacity: 0.9;">We're absolutely thrilled that you're considering joining our awesome team! Your expertise will be perfect for our innovative projects.</p>
-            <div style="background: rgba(255,255,255,0.2); padding: 15px; border-radius: 10px; text-align: center; margin: 15px 0;">
-              <div style="font-size: 10px; opacity: 0.8; margin-bottom: 5px;">Your Total Annual Compensation</div>
-              <div style="font-size: 24px; font-weight: 700;">₹500,000</div>
-            </div>
-            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin: 15px 0;">
-              <div style="background: rgba(255,255,255,0.1); padding: 8px; border-radius: 6px; text-align: center; display: flex; align-items: center;">
-                <span style="margin-right: 8px;">🏥</span>
-                <span style="font-size: 10px;">Health Insurance</span>
-              </div>
-              <div style="background: rgba(255,255,255,0.1); padding: 8px; border-radius: 6px; text-align: center; display: flex; align-items: center;">
-                <span style="margin-right: 8px;">🏖️</span>
-                <span style="font-size: 10px;">Unlimited PTO</span>
-              </div>
-            </div>
-            <div style="text-align: center; margin-top: 20px;">
-              <p style="margin: 0; opacity: 0.9;">Can't wait to work with you! 🤝</p>
-              <div style="width: 150px; height: 30px; border-bottom: 2px solid white; margin: 10px auto;"></div>
-              <p style="margin: 0; font-weight: 600;">HR Manager</p>
-            </div>
-          </div>
-        `
-      }
-    ];
+  async initPredefinedTemplates() {
+    try {
+      // Load templates from backend
+      const templates = await this.templateService.getTemplates().toPromise();
+      this.predefinedTemplates = templates || [];
+    } catch (error) {
+      console.error('Failed to load templates from backend, using fallback templates:', error);
+    }
   }
 
-  ngOnInit() {
+  async ngOnInit() {
     console.log('Initializing GrapesJS editor...');
-    this.initPredefinedTemplates();
-    this.initEditor();
-    this.loadCandidates();
-    this.loadSavedTemplates();
+    
+    // Wait for initialization to complete
+    await this.initPredefinedTemplates();
+    await this.initEditor();
+    
+    console.log('Initialization complete, checking query params...');
+    
+    // Check for query parameters and load specific employee
+    this.route.queryParams.subscribe(params => {
+      const employeeId = params['employeeId'];
+      const templateId = params['templateId'];
+      
+      if (employeeId) {
+        this.loadEmployeeById(+employeeId).then(() => {
+          if (templateId) {
+            this.autoLoadTemplate(+templateId);
+          }
+        });
+      }
+    });
   }
 
-  initEditor() {
+  async loadCandidates() {
+    debugger
+    try {
+      // Load employees from backend as candidates
+      const response = await this.employeeService.getEmployees().toPromise();
+      if (response && response.data) {
+        this.candidates = response.data
+        console.log('Candidates loaded:', this.candidates);
+      }
+    } catch (error) {
+      console.error('Failed to load candidates from backend:', error);
+    }
+  }
+
+  async loadEmployeeById(employeeId: number): Promise<void> {
+    console.log('Loading employee by ID:', employeeId);
+    try {
+      const employee = await this.employeeService.getEmployee(employeeId).toPromise();
+      if (employee) {
+        console.log('Employee loaded:', employee);
+        // Convert Employee to candidate format
+        this.selectedCandidate = {
+          id: employee.id,
+          name: employee.name,
+          candidateName: employee.candidateName,
+          candidateAddress: employee.candidateAddress,
+          position: employee.position,
+          jobRole: employee.jobRole,
+          salary: employee.salary,
+          basicSalary: employee.basicSalary,
+          basicMonthly: employee.basicMonthly,
+          hra: employee.hra,
+          hraMonthly: employee.hraMonthly,
+          conveyance: employee.conveyance,
+          conveyanceMonthly: employee.conveyanceMonthly,
+          medical: employee.medical,
+          lta: employee.lta,
+          otherBenefits: employee.otherBenefits,
+          otherMonthly: employee.otherMonthly,
+          totalSalary: employee.totalSalary,
+          totalMonthly: employee.totalMonthly,
+          joiningDate: employee.joiningDate,
+          offerExpiryDate: employee.offerExpiryDate,
+          currentDate: employee.currentDate,
+          year: employee.year,
+          candidateId: employee.candidateId,
+          companyName: employee.companyName,
+          companyAddress: employee.companyAddress,
+          companyInitials: employee.companyInitials,
+          companyTagline: employee.companyTagline,
+          companyMission: employee.companyMission,
+          hrName: employee.hrName,
+          hrPosition: employee.hrPosition,
+          reportingManager: employee.reportingManager,
+          workLocation: employee.workLocation,
+          isActive: employee.isActive
+        };
+        this.cd.detectChanges();
+      }
+    } catch (error) {
+      console.error('Failed to load employee by ID:', error);
+    }
+  }
+
+  async autoLoadTemplate(templateId: number) {
+    console.log('Auto-loading template:', templateId);
+    
+    // Wait for editor to be ready
+    if (!this.editor) {
+      console.warn('Editor not ready, retrying in 500ms...');
+      setTimeout(() => this.autoLoadTemplate(templateId), 500);
+      return;
+    }
+
+    console.log('predefinedTemplates', this.predefinedTemplates);
+    
+    // First try to find template in predefinedTemplates from backend
+    const template = this.predefinedTemplates.find(t => t.id === templateId);
+    if (template && template.previewHtml) {
+      console.log('Loading template from predefinedTemplates:', template.name);
+      this.editor.setComponents(template.previewHtml);
+      
+      // Apply only template-specific CSS from database
+      if (template.css) {
+        this.editor.setStyle(template.css);
+      }
+      this.selectedTemplatePreview = template;
+      // Update placeholders after template loads (if employee is selected)
+      setTimeout(() => this.updatePlaceholders(), 100);
+      return;
+    }
+  }
+
+  async initEditor(): Promise<void> {
     console.log('Setting up editor configuration...');
     this.editor = grapesjs.init({
       container: '#gjs',
@@ -294,14 +195,16 @@ export class Editor implements OnInit {
     });
 
     console.log('Editor initialized, setting up canvas and blocks...');
-    this.setupCanvas();
+    await this.setupCanvas();
     this.addCustomBlocks();
     this.addCommands();
-    this.loadDefaultTemplate();
+    
     console.log('Editor setup complete!');
   }
 
-  setupCanvas() {
+  async setupCanvas() {
+    console.log('setupcanvas');
+    
     // Set up A4 page layout
     this.editor.setStyle(`
       .gjs-canvas {
@@ -334,13 +237,39 @@ export class Editor implements OnInit {
         border-top: 1px solid #ddd;
         padding-top: 20px;
       }
-      .placeholder {
-        background: #e3f2fd;
-        border: 1px dashed #2196f3;
-        padding: 2px 4px;
-        border-radius: 3px;
-        color: #1976d2;
-        font-weight: 500;
+      .text-block {
+        min-height: 60px;
+        padding: 10px;
+        border: 1px dashed #ccc;
+        background: #fafafa;
+      }
+      .text-block:hover {
+        border-color: #007bff;
+        background: #f0f8ff;
+      }
+        .salary-table { 
+        width: 100% !important; 
+        border-collapse: collapse; 
+      }
+      .salary-table th, .salary-table td {
+        border: 1px solid #ddd;
+        padding: 8px;
+      }
+      .salary-table th {
+        background: #f8f9fa;
+      }
+      img {
+        max-width: 100px;
+        max-height: 100px;
+        width: auto;
+        height: auto;
+        object-fit: contain;
+      }
+      .text-right {
+        text-align: right;
+      }
+        .text-left {
+        text-align: left;
       }
     `);
   }
@@ -370,7 +299,8 @@ export class Editor implements OnInit {
           <p>Dear <span class="placeholder">{{candidateName}}</span>,</p>
           <p>We are pleased to offer you the position of <span class="placeholder">{{jobRole}}</span> with an annual salary of <span class="placeholder">{{salary}}</span>.</p>
         </div>
-      `
+      `,
+      droppable: true
     });
 
     // Heading Block
@@ -406,14 +336,14 @@ export class Editor implements OnInit {
         <table style="width: 100%; border-collapse: collapse; margin: 20px 0;">
           <thead>
             <tr style="background: #f8f9fa;">
-              <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Component</th>
-              <th style="border: 1px solid #ddd; padding: 8px; text-align: right;">Amount</th>
+              <th style="border: 1px solid #ddd; padding: 8px; text-align: left;"><span>Component</span></th>
+              <th style="border: 1px solid #ddd; padding: 8px; text-align: right;"><span>Amount</span></th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              <td style="border: 1px solid #ddd; padding: 8px;">Basic Salary</td>
-              <td style="border: 1px solid #ddd; padding: 8px; text-align: right;"><span class="placeholder">{{basicSalary}}</span></td>
+              <td style="border: 1px solid #ddd; padding: 8px;"><span>Basic salary</span></td>
+              <td style="border: 1px solid #ddd; padding-right: 8px; text-align: right;"><span class="placeholder">{{basicSalary}}</span></td>
             </tr>
             <tr>
               <td style="border: 1px solid #ddd; padding: 8px;">HRA</td>
@@ -425,6 +355,19 @@ export class Editor implements OnInit {
             </tr>
           </tbody>
         </table>
+        <style>
+      .salary-table { 
+        width: 100%; 
+        border-collapse: collapse; 
+      }
+      .salary-table th, .salary-table td {
+        border: 1px solid #ddd;
+        padding: 8px;
+      }
+      .salary-table th {
+        background: #f8f9fa;
+      }
+    </style>
       `
     });
 
@@ -441,6 +384,65 @@ export class Editor implements OnInit {
           <p style="margin: 5px 0; color: #666;">Joining Date: <span class="placeholder">{{joiningDate}}</span></p>
         </div>
       `
+    });
+
+    // Dynamic Field Blocks
+    const fieldBlocks = [
+      { key: 'candidateName', label: 'Candidate Name', category: 'Fields' },
+      { key: 'candidateAddress', label: 'Candidate Address', category: 'Fields' },
+      { key: 'position', label: 'Position', category: 'Fields' },
+      { key: 'jobRole', label: 'Job Role', category: 'Fields' },
+      { key: 'salary', label: 'Annual Salary', category: 'Fields' },
+      { key: 'basicSalary', label: 'Basic Salary', category: 'Fields' },
+      { key: 'basicMonthly', label: 'Basic Monthly', category: 'Fields' },
+      { key: 'hra', label: 'HRA', category: 'Fields' },
+      { key: 'hraMonthly', label: 'HRA Monthly', category: 'Fields' },
+      { key: 'conveyance', label: 'Conveyance', category: 'Fields' },
+      { key: 'conveyanceMonthly', label: 'Conveyance Monthly', category: 'Fields' },
+      { key: 'medical', label: 'Medical Allowance', category: 'Fields' },
+      { key: 'lta', label: 'LTA', category: 'Fields' },
+      { key: 'otherBenefits', label: 'Other Benefits', category: 'Fields' },
+      { key: 'otherMonthly', label: 'Other Monthly', category: 'Fields' },
+      { key: 'totalSalary', label: 'Total Salary', category: 'Fields' },
+      { key: 'totalMonthly', label: 'Total Monthly', category: 'Fields' },
+      { key: 'joiningDate', label: 'Joining Date', category: 'Fields' },
+      { key: 'offerExpiryDate', label: 'Offer Expiry Date', category: 'Fields' },
+      { key: 'currentDate', label: 'Current Date', category: 'Fields' },
+      { key: 'year', label: 'Year', category: 'Fields' },
+      { key: 'candidateId', label: 'Candidate ID', category: 'Fields' },
+      { key: 'companyName', label: 'Company Name', category: 'Fields' },
+      { key: 'companyAddress', label: 'Company Address', category: 'Fields' },
+      { key: 'companyInitials', label: 'Company Initials', category: 'Fields' },
+      { key: 'companyTagline', label: 'Company Tagline', category: 'Fields' },
+      { key: 'companyMission', label: 'Company Mission', category: 'Fields' },
+      { key: 'hrName', label: 'HR Name', category: 'Fields' },
+      { key: 'hrPosition', label: 'HR Position', category: 'Fields' },
+      { key: 'reportingManager', label: 'Reporting Manager', category: 'Fields' },
+      { key: 'workLocation', label: 'Work Location', category: 'Fields' }
+    ];
+
+    fieldBlocks.forEach(field => {
+      bm.add(`field-${field.key}`, {
+        label: field.label,
+        category: field.category,
+        content: {
+          type: 'text',
+          content: `<span class="placeholder">{{${field.key}}} </span>`,
+          style: { 
+            display: 'inline',
+            background: '#e3f2fd',
+            padding: '2px 4px',
+            'border-radius': '3px',
+            color: '#1976d2',
+            'font-weight': '500',
+            'user-select': 'none'
+          },
+          selectable: true,
+          editable: true,
+          droppable: false,
+          removable: true
+        }
+      });
     });
   }
 
@@ -483,60 +485,24 @@ export class Editor implements OnInit {
     });
   }
 
-  loadDefaultTemplate() {
-    const defaultTemplate = `
-      <div class="offer-letter">
-        <div class="header-section">
-          <img src="https://via.placeholder.com/150x50/007bff/white?text=Company+Logo" style="max-width: 150px; margin-bottom: 10px;" />
-          <h1 style="color: #007bff; margin: 0;">{{companyName}}</h1>
-          <p style="margin: 5px 0; color: #666;">{{companyAddress}}</p>
-        </div>
-
-        <div class="body-section">
-          <p>Dear <span class="placeholder">{{candidateName}}</span>,</p>
-          <p>We are pleased to offer you the position of <span class="placeholder">{{jobRole}}</span> with an annual salary of <span class="placeholder">{{salary}}</span>.</p>
-
-          <table style="width: 100%; border-collapse: collapse; margin: 20px 0;">
-            <thead>
-              <tr style="background: #f8f9fa;">
-                <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Component</th>
-                <th style="border: 1px solid #ddd; padding: 8px; text-align: right;">Amount</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td style="border: 1px solid #ddd; padding: 8px;">Basic Salary</td>
-                <td style="border: 1px solid #ddd; padding: 8px; text-align: right;"><span class="placeholder">{{basicSalary}}</span></td>
-              </tr>
-              <tr>
-                <td style="border: 1px solid #ddd; padding: 8px;">HRA</td>
-                <td style="border: 1px solid #ddd; padding: 8px; text-align: right;"><span class="placeholder">{{hra}}</span></td>
-              </tr>
-              <tr style="background: #f8f9fa; font-weight: bold;">
-                <td style="border: 1px solid #ddd; padding: 8px;">Total</td>
-                <td style="border: 1px solid #ddd; padding: 8px; text-align: right;"><span class="placeholder">{{totalSalary}}</span></td>
-              </tr>
-            </tbody>
-          </table>
-
-          <p>Your joining date will be <span class="placeholder">{{joiningDate}}</span>.</p>
-        </div>
-
-        <div class="footer-section">
-          <p>Best Regards,</p>
-          <p style="margin: 10px 0;"><strong>{{hrName}}</strong></p>
-          <p style="margin: 5px 0; color: #666;">{{hrPosition}}</p>
-          <p style="margin: 5px 0; color: #666;">{{companyName}}</p>
-        </div>
-      </div>
-    `;
-
-    this.editor.setComponents(defaultTemplate);
-  }
-
   selectCandidate(event: Event) {
     const id = Number((event.target as HTMLSelectElement).value);
     this.selectedCandidate = this.candidates.find(c => c.id == id);
+    if (this.selectedCandidate) {
+      this.updatePlaceholders();
+    }
+  }
+
+  updatePlaceholders() {
+    if (!this.selectedCandidate) return;
+    const html = this.editor.getHtml();
+    let processedHtml = html;
+    Object.keys(this.selectedCandidate).forEach(key => {
+      const placeholder = `{{${key}}}`;
+      const value = this.selectedCandidate[key];
+      processedHtml = processedHtml.replace(new RegExp(placeholder, 'g'), value);
+    });
+    this.editor.setComponents(processedHtml);
   }
 
   replaceTemplate(template: string, data: any) {
@@ -553,32 +519,54 @@ export class Editor implements OnInit {
 
     const html = this.editor.getHtml();
     const css = this.editor.getCss();
+    console.log('css', css);
+    
 
     // Create clean HTML with only the offer letter content
     const cleanHtml = this.createCleanOfferLetterHTML(html, css);
 
-    this.previewHtml = cleanHtml;
+    // Open in new window for preview
+    const previewWindow = window.open('', '_blank', 'width=800,height=600');
+    if (previewWindow) {
+      previewWindow.document.write(cleanHtml);
+      previewWindow.document.close();
+    } else {
+      alert('Please allow popups for this site to preview');
+    }
   }
 
-  saveTemplate() {
+  async saveTemplate() {
     const html = this.editor.getHtml();
     const css = this.editor.getCss();
-    const template = { html, css, name: `Template ${Date.now()}`, createdAt: new Date() };
+    const templateName = prompt('Enter template name:') || `Template ${Date.now()}`;
 
-    // Save to localStorage for demo
-    const templates = JSON.parse(localStorage.getItem('offerTemplates') || '[]');
-    templates.push(template);
-    localStorage.setItem('offerTemplates', JSON.stringify(templates));
-
-    this.savedTemplates = templates;
-    alert('Template saved successfully!');
-  }
-
-  loadSavedTemplates() {
-    this.savedTemplates = JSON.parse(localStorage.getItem('offerTemplates') || '[]');
+    console.log('Saving template with data:', { htmlLength: html?.length, cssLength: css?.length, name: templateName });
+    
+    try {
+      const response = await this.templateService.saveTemplate({
+        html,
+        css,
+        name: templateName
+      }).toPromise();
+      
+      console.log('Template save response:', response);
+      
+      if (response) {
+        alert('Template saved successfully to database!');
+        // Optionally refresh templates list
+        await this.initPredefinedTemplates();
+      } else {
+        alert('Template saved but no response received');
+      }
+    } catch (error: any) {
+      console.error('Error saving template:', error);
+      alert('Failed to save template. Error: ' + (error?.message || JSON.stringify(error) || 'Unknown error'));
+    }
   }
 
   loadTemplate(template: any) {
+    console.log('loadTemplate', template);
+    
     this.editor.setComponents(template.html);
     this.editor.setStyle(template.css);
   }
@@ -595,28 +583,29 @@ export class Editor implements OnInit {
     }
   }
 
-  generatePDF() {
-    if (!this.selectedCandidate) {
-      alert('Please select a candidate first');
-      return;
-    }
+  // async generatePDF() {
+  //   if (!this.selectedCandidate) {
+  //     alert('Please select a candidate first');
+  //     return;
+  //   }
 
-    // Use the previewHtml content for printing only the offer letter
-    if (!this.previewHtml) {
-      this.preview();
-    }
-    // Open in new window for printing
-    const printWindow = window.open('', '_blank', 'width=800,height=600');
-    if (printWindow) {
-      printWindow.document.write(this.previewHtml);
-      printWindow.document.close();
-      printWindow.onload = () => {
-        printWindow.print();
-      };
-    } else {
-      alert('Please allow popups for this site to generate PDF');
-    }
-  }
+  //   // Use the previewHtml content for printing only the offer letter
+  //   if (!this.previewHtml) {
+  //     this.preview();
+  //   }
+
+  //   // Open in new window for printing
+  //   const printWindow = window.open('', '_blank', 'width=800,height=600');
+  //   if (printWindow) {
+  //     printWindow.document.write(this.previewHtml);
+  //     printWindow.document.close();
+  //     printWindow.onload = () => {
+  //       printWindow.print();
+  //     };
+  //   } else {
+  //     alert('Please allow popups for this site to generate PDF');
+  //   }
+  // }
 
   createCleanOfferLetterHTML(html: string, css: string): string {
     // Extract only the offer-letter content
@@ -779,12 +768,6 @@ export class Editor implements OnInit {
     `;
   }
 
-  loadCandidates() {
-    // For demo, using local data. In production, fetch from API
-    // this.http.get('http://localhost:3000/candidate')
-    //   .subscribe((res: any) => this.candidates = res);
-  }
-
   openTemplateSelector() {
     this.showTemplateModal = true;
   }
@@ -798,17 +781,79 @@ export class Editor implements OnInit {
     this.selectedTemplatePreview = template;
   }
 
-  applySelectedTemplate() {
-    if (!this.selectedTemplatePreview) return;
+  onTemplateSelected(template: Template): void {
+    this.selectedTemplatePreview = template;
+    console.log('selectedTemplate', this.selectedTemplatePreview);
+    
+  }
 
-    // Load the appropriate template based on the selected template ID
-    const templateContent = this.getTemplateContent(this.selectedTemplatePreview.id);
-    if (templateContent) {
-      this.editor.setComponents(templateContent.html);
-      this.editor.setStyle(templateContent.css);
+  onTemplateApplied(template: Template): void {
+    console.log('Template applied:', template);
+    console.log('Template previewHtml:', template.previewHtml);
+    
+    // Apply selected template to editor
+    if (template.previewHtml) {
+      console.log('Setting editor components...');
+      this.editor.setComponents(template.previewHtml);
+      console.log('Editor components set');
+      
+      // Apply only template-specific CSS from database
+      if (template.css) {
+        console.log('Setting editor styles...');
+        this.editor.setStyle(template.css);
+      }
+    } else {
+      console.warn('No previewHtml found in template');
+    }
+    
+    // Update the selected template preview
+    this.selectedTemplatePreview = template;
+    
+    // Show preview
+    setTimeout(() => {
+      this.preview();
+    }, 100);
+    this.closeTemplateSelector();
+  }
+
+  saveOfferLetter() {
+    console.log('saveOfferLetter called');
+    
+    if (!this.selectedCandidate) {
+      alert('Please select a candidate first');
+      return;
     }
 
-    this.closeTemplateSelector();
+    console.log('Selected candidate:', this.selectedCandidate);
+
+    // Save the current offer letter to backend
+    const html = this.editor.getHtml();
+    const css = this.editor.getCss();
+
+    console.log('HTML length:', html.length);
+    console.log('CSS length:', css.length);
+
+    const offerLetterData: Partial<OfferLetter> = {
+      employeeId: this.selectedCandidate.id,
+      employeeName: this.selectedCandidate.candidateName,
+      htmlContent: html,
+      cssContent: css,
+      templateId: this.selectedTemplatePreview?.id,
+      status: 'generated'
+    };
+
+    console.log('Offer letter data:', offerLetterData);
+
+    this.offerLetterService.createOfferLetter(offerLetterData).subscribe({
+      next: (result) => {
+        console.log('Offer letter saved successfully:', result);
+        alert('Offer letter saved successfully!');
+      },
+      error: (error) => {
+        console.error('Error saving offer letter:', error);
+        alert('Failed to save offer letter. Error: ' + (error.message || 'Unknown error'));
+      }
+    });
   }
 
   getTemplateContent(templateId: number) {
@@ -1487,3 +1532,5 @@ export class Editor implements OnInit {
     return templates[templateId] || templates[1];
   }
 }
+
+
