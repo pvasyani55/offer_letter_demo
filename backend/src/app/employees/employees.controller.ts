@@ -1,6 +1,7 @@
 import { Controller, Get, Post, Body, Param, Put, Delete, Query } from '@nestjs/common';
 import { EmployeesService, PaginationResult } from './employees.service';
 import { Employee } from './employee.entity';
+import { CreateEmployeeDto, UpdateEmployeeDto } from './dto/employee.dto';
 
 @Controller('employees')
 export class EmployeesController {
@@ -30,12 +31,12 @@ export class EmployeesController {
   }
 
   @Post()
-  create(@Body() createEmployeeDto: Partial<Employee>) {
+  create(@Body() createEmployeeDto: CreateEmployeeDto) {
     return this.employeesService.create(createEmployeeDto);
   }
 
   @Put(':id')
-  update(@Param('id') id: string, @Body() updateEmployeeDto: Partial<Employee>) {
+  update(@Param('id') id: string, @Body() updateEmployeeDto: UpdateEmployeeDto) {
     return this.employeesService.update(parseInt(id, 10), updateEmployeeDto);
   }
 

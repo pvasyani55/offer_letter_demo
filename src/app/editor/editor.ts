@@ -60,7 +60,6 @@ export class Editor implements OnInit {
   }
 
   async loadCandidates() {
-    debugger
     try {
       // Load employees from backend as candidates
       const response = await this.employeeService.getEmployees().toPromise();
@@ -499,7 +498,11 @@ export class Editor implements OnInit {
     let processedHtml = html;
     Object.keys(this.selectedCandidate).forEach(key => {
       const placeholder = `{{${key}}}`;
-      const value = this.selectedCandidate[key];
+      let value = this.selectedCandidate[key];
+      // Format numbers with commas (Indian locale)
+      if (typeof value === 'number') {
+        value = value.toLocaleString('en-IN');
+      }
       processedHtml = processedHtml.replace(new RegExp(placeholder, 'g'), value);
     });
     this.editor.setComponents(processedHtml);

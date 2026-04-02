@@ -1,13 +1,13 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
 import { OfferLettersService } from './offer-letters.service';
-import { OfferLetter } from './offer-letter.entity';
+import { CreateOfferLetterDto, UpdateOfferLetterDto } from './dto/offer-letter.dto';
 
 @Controller('offer-letters')
 export class OfferLettersController {
   constructor(private readonly offerLettersService: OfferLettersService) {}
 
   @Post()
-  create(@Body() createOfferLetterDto: Partial<OfferLetter>) {
+  create(@Body() createOfferLetterDto: CreateOfferLetterDto) {
     return this.offerLettersService.create(createOfferLetterDto);
   }
 
@@ -27,7 +27,7 @@ export class OfferLettersController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateOfferLetterDto: Partial<OfferLetter>) {
+  update(@Param('id') id: string, @Body() updateOfferLetterDto: UpdateOfferLetterDto) {
     return this.offerLettersService.update(+id, updateOfferLetterDto);
   }
 

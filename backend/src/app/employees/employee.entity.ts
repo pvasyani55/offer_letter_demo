@@ -20,44 +20,44 @@ export class Employee {
   @Column({ type: 'varchar', length: 255 })
   jobRole: string;
 
-  @Column({ type: 'varchar', length: 50 })
-  salary: string;
+  @Column({ type: 'decimal', precision: 15, scale: 2, nullable: true, default: 0 })
+  salary: number;
 
-  @Column({ type: 'varchar', length: 50 })
-  basicSalary: string;
+  @Column({ type: 'decimal', precision: 15, scale: 2, nullable: true, default: 0 })
+  basicSalary: number;
 
-  @Column({ type: 'varchar', length: 50 })
-  basicMonthly: string;
+  @Column({ type: 'decimal', precision: 15, scale: 2, nullable: true, default: 0 })
+  basicMonthly: number;
 
-  @Column({ type: 'varchar', length: 50 })
-  hra: string;
+  @Column({ type: 'decimal', precision: 15, scale: 2, nullable: true, default: 0 })
+  hra: number;
 
-  @Column({ type: 'varchar', length: 50 })
-  hraMonthly: string;
+  @Column({ type: 'decimal', precision: 15, scale: 2, nullable: true, default: 0  })
+  hraMonthly: number;
 
-  @Column({ type: 'varchar', length: 50 })
-  conveyance: string;
+  @Column({ type: 'decimal', precision: 15, scale: 2, nullable: true, default: 0  })
+  conveyance: number;
 
-  @Column({ type: 'varchar', length: 50 })
-  conveyanceMonthly: string;
+  @Column({ type: 'decimal', precision: 15, scale: 2, nullable: true, default: 0  })
+  conveyanceMonthly: number;
 
-  @Column({ type: 'varchar', length: 50 })
-  medical: string;
+  @Column({ type: 'decimal', precision: 15, scale: 2, nullable: true, default: 0  })
+  medical: number;
 
-  @Column({ type: 'varchar', length: 50 })
-  lta: string;
+  @Column({ type: 'decimal', precision: 15, scale: 2, nullable: true })
+  lta: number;
 
-  @Column({ type: 'varchar', length: 50 })
-  otherBenefits: string;
+  @Column({ type: 'decimal', precision: 15, scale: 2, nullable: true })
+  otherBenefits: number;
 
-  @Column({ type: 'varchar', length: 50 })
-  otherMonthly: string;
+  @Column({ type: 'decimal', precision: 15, scale: 2, nullable: true, default: 0  })
+  otherMonthly: number;
 
-  @Column({ type: 'varchar', length: 50 })
-  totalSalary: string;
+  @Column({ type: 'decimal', precision: 15, scale: 2, nullable: true, default: 0  })
+  totalSalary: number;
 
-  @Column({ type: 'varchar', length: 50 })
-  totalMonthly: string;
+  @Column({ type: 'decimal', precision: 15, scale: 2, nullable: true, default: 0  })
+  totalMonthly: number;
 
   @Column({ type: 'varchar', length: 100 })
   joiningDate: string;

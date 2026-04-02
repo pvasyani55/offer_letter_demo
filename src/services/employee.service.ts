@@ -9,19 +9,19 @@ export interface Employee {
   candidateAddress: string;
   position: string;
   jobRole: string;
-  salary: string;
-  basicSalary: string;
-  basicMonthly: string;
-  hra: string;
-  hraMonthly: string;
-  conveyance: string;
-  conveyanceMonthly: string;
-  medical: string;
-  lta: string;
-  otherBenefits: string;
-  otherMonthly: string;
-  totalSalary: string;
-  totalMonthly: string;
+  salary: number;
+  basicSalary: number;
+  basicMonthly: number;
+  hra: number;
+  hraMonthly: number;
+  conveyance: number;
+  conveyanceMonthly: number;
+  medical?: number;
+  lta?: number;
+  otherBenefits?: number;
+  otherMonthly?: number;
+  totalSalary: number;
+  totalMonthly: number;
   joiningDate: string;
   offerExpiryDate: string;
   currentDate: string;
@@ -91,44 +91,4 @@ export class EmployeeService {
   deleteEmployee(id: number): Observable<void> {
     return this.apiService.delete<void>(`/employees/${id}`);
   }
-
-  // Convert employee to candidate format for editor
-  // employeeToCandidate(employee: Employee): any {
-  //   return {
-  //     id: employee.id,
-  //     name: employee.name,
-  //     candidateName: employee.candidateName,
-  //     candidateAddress: employee.candidateAddress,
-  //     position: employee.position,
-  //     jobRole: employee.jobRole,
-  //     salary: employee.salary,
-  //     basicSalary: employee.basicSalary,
-  //     basicMonthly: employee.basicMonthly,
-  //     hra: employee.hra,
-  //     hraMonthly: employee.hraMonthly,
-  //     conveyance: employee.conveyance,
-  //     conveyanceMonthly: employee.conveyanceMonthly,
-  //     medical: employee.medical,
-  //     lta: employee.lta,
-  //     otherBenefits: employee.otherBenefits,
-  //     otherMonthly: employee.otherMonthly,
-  //     totalSalary: employee.totalSalary,
-  //     totalMonthly: employee.totalMonthly,
-  //     joiningDate: employee.joiningDate,
-  //     offerExpiryDate: employee.offerExpiryDate,
-  //     currentDate: employee.currentDate,
-  //     year: employee.year,
-  //     candidateId: employee.candidateId,
-  //     companyName: employee.companyName,
-  //     companyAddress: employee.companyAddress,
-  //     companyInitials: employee.companyInitials,
-  //     companyTagline: employee.companyTagline,
-  //     companyMission: employee.companyMission,
-  //     hrName: employee.hrName,
-  //     hrPosition: employee.hrPosition,
-  //     reportingManager: employee.reportingManager,
-  //     workLocation: employee.workLocation,
-  //     isActive: employee.isActive
-  //   };
-  // }
 }
