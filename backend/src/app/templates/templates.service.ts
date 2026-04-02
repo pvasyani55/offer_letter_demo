@@ -1027,41 +1027,41 @@ export class TemplatesService {
                 <table class="formal-salary-table">
                   <thead>
                     <tr>
-                      <th>Compensation Element</th>
-                      <th>Monthly Amount</th>
-                      <th>Annual Amount</th>
+                      <th><span>Compensation Element</span></th>
+                      <th><span>Monthly Amount</span></th>
+                      <th><span>Annual Amount</span></th>
                     </tr>
                   </thead>
                   <tbody>
                     <tr>
-                      <td>Basic Salary</td>
+                      <td><span>Basic Salary</span></td>
                       <td class="monetary">{{basicMonthly}}</td>
                       <td class="monetary">{{basicSalary}}</td>
                     </tr>
                     <tr>
-                      <td>House Rent Allowance</td>
-                      <td class="monetary">{{hraMonthly}}</td>
-                      <td class="monetary">{{hra}}</td>
+                      <td><span>House Rent Allowance</span></td>
+                      <td class="monetary"><span>{{hraMonthly}}</span></td>
+                      <td class="monetary"><span>{{hra}}</span></td>
                     </tr>
                     <tr>
-                      <td>Conveyance Allowance</td>
-                      <td class="monetary">{{conveyanceMonthly}}</td>
-                      <td class="monetary">{{conveyance}}</td>
+                      <td><span>Conveyance Allowance</span></td>
+                      <td class="monetary"><span>{{conveyanceMonthly}}</span></td>
+                      <td class="monetary"><span>{{conveyance}}</span></td>
                     </tr>
                     <tr>
-                      <td>LTA</td>
-                      <td class="monetary">{{lta}}</td>
-                      <td class="monetary">{{lta}}</td>
+                      <td><span>LTA</span></td>
+                      <td class="monetary"><span>{{lta}}</span></td>
+                      <td class="monetary"><span>{{lta}}</span></td>
                     </tr>
                     <tr>
-                      <td>Medical Allowance</td>
-                      <td class="monetary">{{medical}}</td>
-                      <td class="monetary">{{medical}}</td>
+                      <td><span>Medical Allowance</span></td>
+                      <td class="monetary"><span>{{medical}}</span></td>
+                      <td class="monetary"><span>{{medical}}</span></td>
                     </tr>
                     <tr class="grand-total">
                       <td><strong>GRAND TOTAL</strong></td>
-                      <td class="monetary"><strong>{{totalMonthly}}</strong></td>
-                      <td class="monetary"><strong>{{totalSalary}}</strong></td>
+                      <td class="monetary"><strong><span>{{totalMonthly}}</span></strong></td>
+                      <td class="monetary"><strong><span>{{totalSalary}}</span></strong></td>
                     </tr>
                   </tbody>
                 </table>
@@ -1418,11 +1418,11 @@ export class TemplatesService {
               <p>We are delighted to offer you the position of <strong>{{jobRole}}</strong> at {{companyName}}. This offer reflects our confidence in your professional capabilities and our commitment to your career growth.</p>
 
               <div class="compensation-professional">
-                <h3>Compensation Package</h3>
+                <h3><span>Compensation Package</span></h3>
                 <div class="salary-highlight-pro">
                   <div class="total-package">
-                    <span class="package-label">Annual Package</span>
-                    <span class="package-amount">{{totalSalary}}</span>
+                    <span class="package-label"><span>Annual Package</span></span>
+                    <span class="package-amount"><span>{{totalSalary}}</span></span>
                   </div>
                 </div>
 
