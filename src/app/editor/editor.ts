@@ -186,86 +186,15 @@ export class Editor implements OnInit {
     });
 
     console.log('Editor initialized, setting up canvas and blocks...');
-    // await this.setupCanvas();
-    this.addCustomBlocks();
+    // Fetch field blocks from backend then initialize
+    const fieldBlocks = await this.employeeService.getEntityFields().toPromise();
+    this.addCustomBlocks(fieldBlocks || []);
     this.addCommands();
     
     console.log('Editor setup complete!');
   }
 
-  // async setupCanvas() {
-  //   console.log('setupcanvas');
-    
-  //   // Set up A4 page layout
-  //   this.editor.setStyle(`
-  //     .gjs-canvas {
-  //       background: #f8f9fa;
-  //     }
-  //     .offer-letter {
-  //       width: 210mm;
-  //       min-height: 297mm;
-  //       margin: 20px auto;
-  //       background: white;
-  //       box-shadow: 0 0 20px rgba(0,0,0,0.1);
-  //       padding: 25mm;
-  //       font-family: 'Roboto', sans-serif;
-  //       font-size: 12pt;
-  //       line-height: 1.5;
-  //       color: #333;
-  //     }
-  //     .header-section {
-  //       text-align: center;
-  //       margin-bottom: 30px;
-  //       border-bottom: 2px solid #007bff;
-  //       padding-bottom: 20px;
-  //     }
-  //     .body-section {
-  //       margin: 30px 0;
-  //     }
-  //     .footer-section {
-  //       margin-top: 50px;
-  //       text-align: center;
-  //       border-top: 1px solid #ddd;
-  //       padding-top: 20px;
-  //     }
-  //     .text-block {
-  //       min-height: 60px;
-  //       padding: 10px;
-  //       border: 1px dashed #ccc;
-  //       background: #fafafa;
-  //     }
-  //     .text-block:hover {
-  //       border-color: #007bff;
-  //       background: #f0f8ff;
-  //     }
-  //       .salary-table { 
-  //       width: 100% !important; 
-  //       border-collapse: collapse; 
-  //     }
-  //     .salary-table th, .salary-table td {
-  //       border: 1px solid #ddd;
-  //       padding: 8px;
-  //     }
-  //     .salary-table th {
-  //       background: #f8f9fa;
-  //     }
-  //     img {
-  //       max-width: 100px;
-  //       max-height: 100px;
-  //       width: auto;
-  //       height: auto;
-  //       object-fit: contain;
-  //     }
-  //     .text-right {
-  //       text-align: right;
-  //     }
-  //       .text-left {
-  //       text-align: left;
-  //     }
-  //   `);
-  // }
-
-  addCustomBlocks() {
+  addCustomBlocks(fieldBlocks: Array<{ key: string; label: string; category: string }>) {
     const bm = this.editor.BlockManager;
 
     // Header Block
@@ -377,41 +306,7 @@ export class Editor implements OnInit {
       `
     });
 
-    // Dynamic Field Blocks
-    const fieldBlocks = [
-      { key: 'candidateName', label: 'Candidate Name', category: 'Fields' },
-      { key: 'candidateAddress', label: 'Candidate Address', category: 'Fields' },
-      { key: 'position', label: 'Position', category: 'Fields' },
-      { key: 'jobRole', label: 'Job Role', category: 'Fields' },
-      { key: 'salary', label: 'Annual Salary', category: 'Fields' },
-      { key: 'basicSalary', label: 'Basic Salary', category: 'Fields' },
-      { key: 'basicMonthly', label: 'Basic Monthly', category: 'Fields' },
-      { key: 'hra', label: 'HRA', category: 'Fields' },
-      { key: 'hraMonthly', label: 'HRA Monthly', category: 'Fields' },
-      { key: 'conveyance', label: 'Conveyance', category: 'Fields' },
-      { key: 'conveyanceMonthly', label: 'Conveyance Monthly', category: 'Fields' },
-      { key: 'medical', label: 'Medical Allowance', category: 'Fields' },
-      { key: 'lta', label: 'LTA', category: 'Fields' },
-      { key: 'otherBenefits', label: 'Other Benefits', category: 'Fields' },
-      { key: 'otherMonthly', label: 'Other Monthly', category: 'Fields' },
-      { key: 'totalSalary', label: 'Total Salary', category: 'Fields' },
-      { key: 'totalMonthly', label: 'Total Monthly', category: 'Fields' },
-      { key: 'joiningDate', label: 'Joining Date', category: 'Fields' },
-      { key: 'offerExpiryDate', label: 'Offer Expiry Date', category: 'Fields' },
-      { key: 'currentDate', label: 'Current Date', category: 'Fields' },
-      { key: 'year', label: 'Year', category: 'Fields' },
-      { key: 'candidateId', label: 'Candidate ID', category: 'Fields' },
-      { key: 'companyName', label: 'Company Name', category: 'Fields' },
-      { key: 'companyAddress', label: 'Company Address', category: 'Fields' },
-      { key: 'companyInitials', label: 'Company Initials', category: 'Fields' },
-      { key: 'companyTagline', label: 'Company Tagline', category: 'Fields' },
-      { key: 'companyMission', label: 'Company Mission', category: 'Fields' },
-      { key: 'hrName', label: 'HR Name', category: 'Fields' },
-      { key: 'hrPosition', label: 'HR Position', category: 'Fields' },
-      { key: 'reportingManager', label: 'Reporting Manager', category: 'Fields' },
-      { key: 'workLocation', label: 'Work Location', category: 'Fields' }
-    ];
-
+    // Dynamic Field Blocks - fetched from backend Employee entity
     fieldBlocks.forEach(field => {
       bm.add(`field-${field.key}`, {
         label: field.label,

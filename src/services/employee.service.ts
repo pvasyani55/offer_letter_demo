@@ -91,4 +91,9 @@ export class EmployeeService {
   deleteEmployee(id: number): Observable<void> {
     return this.apiService.delete<void>(`/employees/${id}`);
   }
+
+  // Get Employee entity field metadata for dynamic field blocks
+  getEntityFields(): Observable<Array<{ key: string; label: string; category: string }>> {
+    return this.apiService.get<Array<{ key: string; label: string; category: string }>>('/employees/fields');
+  }
 }
