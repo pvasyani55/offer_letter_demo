@@ -41,9 +41,7 @@ export class Editor implements OnInit {
     // Wait for initialization to complete
     await this.initPredefinedTemplates();
     await this.initEditor();
-    
-    console.log('Initialization complete, checking query params...');
-    
+  
     // Check for query parameters and load specific employee
     this.route.queryParams.subscribe(params => {
       const employeeId = params['employeeId'];
@@ -123,21 +121,16 @@ export class Editor implements OnInit {
   }
 
   async autoLoadTemplate(templateId: number) {
-    console.log('Auto-loading template:', templateId);
-    
     // Wait for editor to be ready
     if (!this.editor) {
       console.warn('Editor not ready, retrying in 500ms...');
       setTimeout(() => this.autoLoadTemplate(templateId), 500);
       return;
     }
-
-    console.log('predefinedTemplates', this.predefinedTemplates);
     
     // First try to find template in predefinedTemplates from backend
     const template = this.predefinedTemplates.find(t => t.id === templateId);
     if (template && template.previewHtml) {
-      console.log('Loading template from predefinedTemplates:', template.name);
       this.editor.setComponents(template.previewHtml);
       
       // Apply only template-specific CSS from database
@@ -152,7 +145,6 @@ export class Editor implements OnInit {
   }
 
   async initEditor(): Promise<void> {
-    console.log('Setting up editor configuration...');
     this.editor = grapesjs.init({
       container: '#gjs',
       height: '100%',
@@ -194,84 +186,84 @@ export class Editor implements OnInit {
     });
 
     console.log('Editor initialized, setting up canvas and blocks...');
-    await this.setupCanvas();
+    // await this.setupCanvas();
     this.addCustomBlocks();
     this.addCommands();
     
     console.log('Editor setup complete!');
   }
 
-  async setupCanvas() {
-    console.log('setupcanvas');
+  // async setupCanvas() {
+  //   console.log('setupcanvas');
     
-    // Set up A4 page layout
-    this.editor.setStyle(`
-      .gjs-canvas {
-        background: #f8f9fa;
-      }
-      .offer-letter {
-        width: 210mm;
-        min-height: 297mm;
-        margin: 20px auto;
-        background: white;
-        box-shadow: 0 0 20px rgba(0,0,0,0.1);
-        padding: 25mm;
-        font-family: 'Roboto', sans-serif;
-        font-size: 12pt;
-        line-height: 1.5;
-        color: #333;
-      }
-      .header-section {
-        text-align: center;
-        margin-bottom: 30px;
-        border-bottom: 2px solid #007bff;
-        padding-bottom: 20px;
-      }
-      .body-section {
-        margin: 30px 0;
-      }
-      .footer-section {
-        margin-top: 50px;
-        text-align: center;
-        border-top: 1px solid #ddd;
-        padding-top: 20px;
-      }
-      .text-block {
-        min-height: 60px;
-        padding: 10px;
-        border: 1px dashed #ccc;
-        background: #fafafa;
-      }
-      .text-block:hover {
-        border-color: #007bff;
-        background: #f0f8ff;
-      }
-        .salary-table { 
-        width: 100% !important; 
-        border-collapse: collapse; 
-      }
-      .salary-table th, .salary-table td {
-        border: 1px solid #ddd;
-        padding: 8px;
-      }
-      .salary-table th {
-        background: #f8f9fa;
-      }
-      img {
-        max-width: 100px;
-        max-height: 100px;
-        width: auto;
-        height: auto;
-        object-fit: contain;
-      }
-      .text-right {
-        text-align: right;
-      }
-        .text-left {
-        text-align: left;
-      }
-    `);
-  }
+  //   // Set up A4 page layout
+  //   this.editor.setStyle(`
+  //     .gjs-canvas {
+  //       background: #f8f9fa;
+  //     }
+  //     .offer-letter {
+  //       width: 210mm;
+  //       min-height: 297mm;
+  //       margin: 20px auto;
+  //       background: white;
+  //       box-shadow: 0 0 20px rgba(0,0,0,0.1);
+  //       padding: 25mm;
+  //       font-family: 'Roboto', sans-serif;
+  //       font-size: 12pt;
+  //       line-height: 1.5;
+  //       color: #333;
+  //     }
+  //     .header-section {
+  //       text-align: center;
+  //       margin-bottom: 30px;
+  //       border-bottom: 2px solid #007bff;
+  //       padding-bottom: 20px;
+  //     }
+  //     .body-section {
+  //       margin: 30px 0;
+  //     }
+  //     .footer-section {
+  //       margin-top: 50px;
+  //       text-align: center;
+  //       border-top: 1px solid #ddd;
+  //       padding-top: 20px;
+  //     }
+  //     .text-block {
+  //       min-height: 60px;
+  //       padding: 10px;
+  //       border: 1px dashed #ccc;
+  //       background: #fafafa;
+  //     }
+  //     .text-block:hover {
+  //       border-color: #007bff;
+  //       background: #f0f8ff;
+  //     }
+  //       .salary-table { 
+  //       width: 100% !important; 
+  //       border-collapse: collapse; 
+  //     }
+  //     .salary-table th, .salary-table td {
+  //       border: 1px solid #ddd;
+  //       padding: 8px;
+  //     }
+  //     .salary-table th {
+  //       background: #f8f9fa;
+  //     }
+  //     img {
+  //       max-width: 100px;
+  //       max-height: 100px;
+  //       width: auto;
+  //       height: auto;
+  //       object-fit: contain;
+  //     }
+  //     .text-right {
+  //       text-align: right;
+  //     }
+  //       .text-left {
+  //       text-align: left;
+  //     }
+  //   `);
+  // }
 
   addCustomBlocks() {
     const bm = this.editor.BlockManager;
@@ -521,9 +513,7 @@ export class Editor implements OnInit {
     }
 
     const html = this.editor.getHtml();
-    const css = this.editor.getCss();
-    console.log('css', css);
-    
+    const css = this.editor.getCss();    
 
     // Create clean HTML with only the offer letter content
     const cleanHtml = this.createCleanOfferLetterHTML(html, css);
@@ -585,30 +575,6 @@ export class Editor implements OnInit {
       }
     }
   }
-
-  // async generatePDF() {
-  //   if (!this.selectedCandidate) {
-  //     alert('Please select a candidate first');
-  //     return;
-  //   }
-
-  //   // Use the previewHtml content for printing only the offer letter
-  //   if (!this.previewHtml) {
-  //     this.preview();
-  //   }
-
-  //   // Open in new window for printing
-  //   const printWindow = window.open('', '_blank', 'width=800,height=600');
-  //   if (printWindow) {
-  //     printWindow.document.write(this.previewHtml);
-  //     printWindow.document.close();
-  //     printWindow.onload = () => {
-  //       printWindow.print();
-  //     };
-  //   } else {
-  //     alert('Please allow popups for this site to generate PDF');
-  //   }
-  // }
 
   createCleanOfferLetterHTML(html: string, css: string): string {
     // Extract only the offer-letter content
@@ -785,20 +751,13 @@ export class Editor implements OnInit {
   }
 
   onTemplateSelected(template: Template): void {
-    this.selectedTemplatePreview = template;
-    console.log('selectedTemplate', this.selectedTemplatePreview);
-    
+    this.selectedTemplatePreview = template; 
   }
 
-  onTemplateApplied(template: Template): void {
-    console.log('Template applied:', template);
-    console.log('Template previewHtml:', template.previewHtml);
-    
+  onTemplateApplied(template: Template): void {  
     // Apply selected template to editor
     if (template.previewHtml) {
-      console.log('Setting editor components...');
       this.editor.setComponents(template.previewHtml);
-      console.log('Editor components set');
       
       // Apply only template-specific CSS from database
       if (template.css) {
@@ -819,22 +778,15 @@ export class Editor implements OnInit {
     this.closeTemplateSelector();
   }
 
-  saveOfferLetter() {
-    console.log('saveOfferLetter called');
-    
+  saveOfferLetter() { 
     if (!this.selectedCandidate) {
       alert('Please select a candidate first');
       return;
     }
 
-    console.log('Selected candidate:', this.selectedCandidate);
-
     // Save the current offer letter to backend
     const html = this.editor.getHtml();
     const css = this.editor.getCss();
-
-    console.log('HTML length:', html.length);
-    console.log('CSS length:', css.length);
 
     const offerLetterData: Partial<OfferLetter> = {
       employeeId: this.selectedCandidate.id,
@@ -845,11 +797,8 @@ export class Editor implements OnInit {
       status: 'generated'
     };
 
-    console.log('Offer letter data:', offerLetterData);
-
     this.offerLetterService.createOfferLetter(offerLetterData).subscribe({
       next: (result) => {
-        console.log('Offer letter saved successfully:', result);
         alert('Offer letter saved successfully!');
       },
       error: (error) => {
@@ -857,682 +806,6 @@ export class Editor implements OnInit {
         alert('Failed to save offer letter. Error: ' + (error.message || 'Unknown error'));
       }
     });
-  }
-
-  getTemplateContent(templateId: number) {
-    const templates: any = {
-      1: { // Classic Corporate
-        html: `
-          <div class="offer-letter classic-corporate">
-            <div class="header-section">
-              <div class="company-logo">
-                <img src="https://via.placeholder.com/120x40/2c3e50/white?text=LOGO" alt="Company Logo" style="max-width: 120px; height: auto;" />
-              </div>
-              <div class="company-info">
-                <h1 style="color: #2c3e50; margin: 10px 0; font-size: 24px;">{{companyName}}</h1>
-                <p style="margin: 5px 0; color: #666; font-size: 14px;">{{companyAddress}}</p>
-                <p style="margin: 5px 0; color: #666; font-size: 12px;">Phone: +1 (555) 123-4567 | Email: hr@company.com</p>
-              </div>
-            </div>
-
-            <div class="letter-header">
-              <div class="date" style="text-align: right; margin-bottom: 30px;">
-                <p style="margin: 0; font-weight: 500;">Date: <span style="font-weight: normal;">{{currentDate}}</span></p>
-              </div>
-
-              <div class="recipient-info" style="margin-bottom: 30px;">
-                <p style="margin: 0; line-height: 1.6;">
-                  <span class="placeholder" style="font-weight: 500;">{{candidateName}}</span><br>
-                  <span class="placeholder">{{candidateAddress}}</span>
-                </p>
-              </div>
-            </div>
-
-            <div class="body-section">
-              <div class="subject" style="margin-bottom: 30px;">
-                <h2 style="color: #2c3e50; margin: 0; font-size: 18px; text-decoration: underline;">Subject: Offer of Employment</h2>
-              </div>
-
-              <div class="salutation" style="margin-bottom: 20px;">
-                <p style="margin: 0;">Dear <span class="placeholder" style="font-weight: 500;">{{candidateName}}</span>,</p>
-              </div>
-
-              <div class="content">
-                <p style="margin-bottom: 15px; text-align: justify; line-height: 1.6;">
-                  We are delighted to extend a formal offer of employment to you for the position of
-                  <span class="placeholder" style="font-weight: 500;">{{jobRole}}</span> at {{companyName}}.
-                  We believe your skills and experience will be a valuable addition to our team.
-                </p>
-
-                <p style="margin-bottom: 15px; text-align: justify; line-height: 1.6;">
-                  Your starting date will be <span class="placeholder" style="font-weight: 500;">{{joiningDate}}</span>.
-                  You will report to the <span class="placeholder">{{reportingManager}}</span> and will be based at our
-                  <span class="placeholder">{{workLocation}}</span> office.
-                </p>
-
-                <div class="compensation-section" style="margin: 30px 0;">
-                  <h3 style="color: #2c3e50; margin-bottom: 15px; font-size: 16px;">Compensation Package:</h3>
-
-                  <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px; border: 1px solid #ddd;">
-                    <thead>
-                      <tr style="background: #f8f9fa;">
-                        <th style="border: 1px solid #ddd; padding: 12px; text-align: left; font-weight: 600; color: #2c3e50;">Component</th>
-                        <th style="border: 1px solid #ddd; padding: 12px; text-align: right; font-weight: 600; color: #2c3e50;">Annual Amount</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-                        <td style="border: 1px solid #ddd; padding: 12px;">Basic Salary</td>
-                        <td style="border: 1px solid #ddd; padding: 12px; text-align: right; font-weight: 500;"><span class="placeholder">₹{{basicSalary}}</span></td>
-                      </tr>
-                      <tr style="background: #f9f9f9;">
-                        <td style="border: 1px solid #ddd; padding: 12px;">House Rent Allowance (HRA)</td>
-                        <td style="border: 1px solid #ddd; padding: 12px; text-align: right; font-weight: 500;"><span class="placeholder">₹{{hra}}</span></td>
-                      </tr>
-                      <tr>
-                        <td style="border: 1px solid #ddd; padding: 12px;">Conveyance Allowance</td>
-                        <td style="border: 1px solid #ddd; padding: 12px; text-align: right; font-weight: 500;"><span class="placeholder">₹{{conveyance}}</span></td>
-                      </tr>
-                      <tr style="background: #f9f9f9;">
-                        <td style="border: 1px solid #ddd; padding: 12px;">Medical Allowance</td>
-                        <td style="border: 1px solid #ddd; padding: 12px; text-align: right; font-weight: 500;"><span class="placeholder">₹{{medical}}</span></td>
-                      </tr>
-                      <tr style="background: #2c3e50; color: white; font-weight: bold;">
-                        <td style="border: 1px solid #ddd; padding: 12px; font-weight: bold;">Total Annual Compensation</td>
-                        <td style="border: 1px solid #ddd; padding: 12px; text-align: right; font-weight: bold;"><span class="placeholder">₹{{totalSalary}}</span></td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-
-                <p style="margin-bottom: 15px; text-align: justify; line-height: 1.6;">
-                  In addition to the above, you will be eligible for our standard benefits package including health insurance,
-                  paid time off, and professional development opportunities.
-                </p>
-
-                <p style="margin-bottom: 15px; text-align: justify; line-height: 1.6;">
-                  This offer is contingent upon satisfactory completion of background verification and reference checks.
-                  Please sign and return this letter by <span class="placeholder" style="font-weight: 500;">{{offerExpiryDate}}</span>
-                  to indicate your acceptance of this offer.
-                </p>
-              </div>
-            </div>
-
-            <div class="footer-section" style="margin-top: 50px;">
-              <div class="signature-section" style="display: flex; justify-content: space-between; align-items: flex-start;">
-                <div class="acceptance" style="flex: 1; margin-right: 50px;">
-                  <p style="margin-bottom: 40px; font-weight: 500;">Accepted by:</p>
-                  <div style="border-bottom: 1px solid #ddd; width: 200px; margin-bottom: 5px;"></div>
-                  <p style="margin: 0; font-size: 12px; color: #666;"><span class="placeholder">{{candidateName}}</span></p>
-                  <p style="margin: 0; font-size: 12px; color: #666;">Date: _______________</p>
-                </div>
-
-                <div class="company-signature" style="flex: 1; text-align: center;">
-                  <p style="margin-bottom: 40px; font-weight: 500;">For {{companyName}}:</p>
-                  <div style="border-bottom: 1px solid #ddd; width: 200px; margin: 0 auto 5px auto;"></div>
-                  <p style="margin: 0; font-size: 12px; color: #666;"><span class="placeholder">{{hrName}}</span></p>
-                  <p style="margin: 0; font-size: 12px; color: #666;"><span class="placeholder">{{hrPosition}}</span></p>
-                  <p style="margin: 0; font-size: 12px; color: #666;">{{companyName}}</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        `,
-        css: `
-          .classic-corporate {
-            font-family: 'Times New Roman', serif;
-            font-size: 12pt;
-            line-height: 1.6;
-            color: #333;
-          }
-          .classic-corporate .header-section {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 40px;
-            padding-bottom: 20px;
-            border-bottom: 2px solid #2c3e50;
-          }
-          .classic-corporate .company-logo img {
-            max-height: 60px;
-          }
-          .classic-corporate .placeholder {
-            background: #ecf0f1;
-            border: 1px dashed #3498db;
-            padding: 2px 4px;
-            border-radius: 2px;
-            color: #2980b9;
-            font-weight: 500;
-          }
-        `
-      },
-      2: { // Modern Minimal
-        html: `
-          <div class="offer-letter modern-minimal">
-            <div class="header-section">
-              <div class="logo-container" style="text-align: center; margin-bottom: 30px;">
-                <div style="width: 80px; height: 80px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; color: white; font-size: 24px; font-weight: bold; margin-bottom: 15px;">
-                  {{companyInitials}}
-                </div>
-                <h1 style="color: #333; margin: 0; font-size: 28px; font-weight: 300; letter-spacing: -1px;">{{companyName}}</h1>
-                <p style="margin: 5px 0 0 0; color: #666; font-size: 14px; font-weight: 400;">{{companyAddress}}</p>
-              </div>
-            </div>
-
-            <div class="letter-meta" style="display: flex; justify-content: space-between; margin-bottom: 40px; padding: 20px; background: #f8f9fa; border-radius: 8px;">
-              <div>
-                <h3 style="margin: 0 0 10px 0; color: #333; font-size: 16px;">Offer Details</h3>
-                <p style="margin: 0; color: #666; font-size: 14px;">Position: <span class="placeholder" style="font-weight: 500; color: #333;">{{jobRole}}</span></p>
-                <p style="margin: 0; color: #666; font-size: 14px;">Start Date: <span class="placeholder" style="font-weight: 500; color: #333;">{{joiningDate}}</span></p>
-              </div>
-              <div style="text-align: right;">
-                <p style="margin: 0; color: #666; font-size: 14px;">Date: <span style="font-weight: 500; color: #333;">{{currentDate}}</span></p>
-                <p style="margin: 0; color: #666; font-size: 14px;">Ref: <span style="font-weight: 500; color: #333;">OFF-{{candidateId}}-2026</span></p>
-              </div>
-            </div>
-
-            <div class="recipient-section" style="margin-bottom: 30px;">
-              <p style="margin: 0; font-size: 16px; color: #333;">
-                <span class="placeholder" style="font-weight: 600;">{{candidateName}}</span><br>
-                <span class="placeholder" style="color: #666;">{{candidateAddress}}</span>
-              </p>
-            </div>
-
-            <div class="body-section">
-              <div class="greeting" style="margin-bottom: 25px;">
-                <p style="margin: 0; font-size: 18px; color: #333;">Dear <span class="placeholder" style="font-weight: 600;">{{candidateName}}</span>,</p>
-              </div>
-
-              <div class="main-content">
-                <p style="margin-bottom: 20px; font-size: 15px; line-height: 1.7; color: #444;">
-                  We're thrilled to extend this offer for the <span class="placeholder" style="font-weight: 600; color: #667eea;">{{jobRole}}</span> position at {{companyName}}.
-                  Your expertise and passion align perfectly with our vision and culture.
-                </p>
-
-                <div class="highlight-box" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 25px; border-radius: 12px; margin: 30px 0; text-align: center;">
-                  <h3 style="margin: 0 0 10px 0; font-size: 24px; font-weight: 300;">Annual Compensation</h3>
-                  <p style="margin: 0; font-size: 36px; font-weight: 600;">₹<span class="placeholder">{{totalSalary}}</span></p>
-                </div>
-
-                <div class="compensation-breakdown" style="margin: 30px 0;">
-                  <h4 style="color: #333; margin-bottom: 15px; font-size: 16px;">Compensation Breakdown</h4>
-                  <div class="comp-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-                    <div class="comp-item" style="background: #f8f9fa; padding: 15px; border-radius: 8px; border-left: 4px solid #667eea;">
-                      <div style="font-size: 12px; color: #666; margin-bottom: 5px;">Basic Salary</div>
-                      <div style="font-size: 18px; font-weight: 600; color: #333;">₹<span class="placeholder">{{basicSalary}}</span></div>
-                    </div>
-                    <div class="comp-item" style="background: #f8f9fa; padding: 15px; border-radius: 8px; border-left: 4px solid #764ba2;">
-                      <div style="font-size: 12px; color: #666; margin-bottom: 5px;">HRA</div>
-                      <div style="font-size: 18px; font-weight: 600; color: #333;">₹<span class="placeholder">{{hra}}</span></div>
-                    </div>
-                    <div class="comp-item" style="background: #f8f9fa; padding: 15px; border-radius: 8px; border-left: 4px solid #f093fb;">
-                      <div style="font-size: 12px; color: #666; margin-bottom: 5px;">Conveyance</div>
-                      <div style="font-size: 18px; font-weight: 600; color: #333;">₹<span class="placeholder">{{conveyance}}</span></div>
-                    </div>
-                    <div class="comp-item" style="background: #f8f9fa; padding: 15px; border-radius: 8px; border-left: 4px solid #4facfe;">
-                      <div style="font-size: 12px; color: #666; margin-bottom: 5px;">LTA</div>
-                      <div style="font-size: 18px; font-weight: 600; color: #333;">₹<span class="placeholder">{{lta}}</span></div>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="benefits-section" style="margin: 30px 0;">
-                  <h4 style="color: #333; margin-bottom: 15px; font-size: 16px;">Additional Benefits</h4>
-                  <div class="benefits-list" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px;">
-                    <div class="benefit-item" style="display: flex; align-items: center; padding: 8px 0;">
-                      <span style="color: #667eea; margin-right: 10px;">✓</span>
-                      <span style="font-size: 14px;">Health Insurance</span>
-                    </div>
-                    <div class="benefit-item" style="display: flex; align-items: center; padding: 8px 0;">
-                      <span style="color: #667eea; margin-right: 10px;">✓</span>
-                      <span style="font-size: 14px;">Paid Time Off (24 days)</span>
-                    </div>
-                    <div class="benefit-item" style="display: flex; align-items: center; padding: 8px 0;">
-                      <span style="color: #667eea; margin-right: 10px;">✓</span>
-                      <span style="font-size: 14px;">Learning Allowance</span>
-                    </div>
-                    <div class="benefit-item" style="display: flex; align-items: center; padding: 8px 0;">
-                      <span style="color: #667eea; margin-right: 10px;">✓</span>
-                      <span style="font-size: 14px;">Flexible Work Hours</span>
-                    </div>
-                  </div>
-                </div>
-
-                <p style="margin-bottom: 20px; font-size: 15px; line-height: 1.7; color: #444;">
-                  This offer is valid until <span class="placeholder" style="font-weight: 600;">{{offerExpiryDate}}</span>.
-                  To accept this offer, please sign and return this letter or reply to this email.
-                </p>
-
-                <p style="margin-bottom: 20px; font-size: 15px; line-height: 1.7; color: #444;">
-                  We're excited about the possibility of you joining our team and contributing to our mission of
-                  <span class="placeholder">{{companyMission}}</span>.
-                </p>
-              </div>
-            </div>
-
-            <div class="footer-section" style="margin-top: 50px; text-align: center;">
-              <div class="signature-block" style="display: inline-block; text-align: center;">
-                <p style="margin-bottom: 30px; font-weight: 500; color: #333;">Best regards,</p>
-                <div style="width: 200px; height: 60px; border-bottom: 2px solid #667eea; margin: 0 auto 10px auto;"></div>
-                <p style="margin: 0; font-weight: 600; color: #333;"><span class="placeholder">{{hrName}}</span></p>
-                <p style="margin: 0; font-size: 13px; color: #666;"><span class="placeholder">{{hrPosition}}</span></p>
-                <p style="margin: 0; font-size: 13px; color: #666;">{{companyName}}</p>
-                <p style="margin: 0; font-size: 12px; color: #666;">+1 (555) 123-4567 | hr@company.com</p>
-              </div>
-            </div>
-          </div>
-        `,
-        css: `
-          .modern-minimal {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            font-size: 14px;
-            line-height: 1.6;
-            color: #333;
-            max-width: 800px;
-            margin: 0 auto;
-          }
-          .modern-minimal .placeholder {
-            background: #e8f4f8;
-            border: 1px dashed #667eea;
-            padding: 2px 6px;
-            border-radius: 4px;
-            color: #667eea;
-            font-weight: 500;
-          }
-          .modern-minimal .highlight-box {
-            box-shadow: 0 8px 32px rgba(102, 126, 234, 0.2);
-          }
-        `
-      },
-      3: { // Elegant Professional
-        html: `
-          <div class="offer-letter elegant-professional">
-            <div class="header-section" style="text-align: center; margin-bottom: 40px; padding: 30px 0; border-bottom: 3px double #8b4513;">
-              <div class="letterhead" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                <div class="company-seal" style="width: 60px; height: 60px; border: 2px solid #8b4513; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: bold; color: #8b4513;">
-                  {{companyInitials}}
-                </div>
-                <div class="company-details" style="text-align: center; flex: 1;">
-                  <h1 style="color: #2f4f4f; margin: 0; font-size: 32px; font-family: 'Garamond', serif; font-weight: normal; letter-spacing: 2px;">{{companyName}}</h1>
-                  <p style="margin: 5px 0; color: #666; font-size: 14px; font-style: italic;">{{companyTagline}}</p>
-                  <p style="margin: 5px 0; color: #666; font-size: 12px;">{{companyAddress}}</p>
-                </div>
-                <div class="company-seal" style="width: 60px; height: 60px; border: 2px solid #8b4513; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: bold; color: #8b4513;">
-                  {{companyInitials}}
-                </div>
-              </div>
-            </div>
-
-            <div class="letter-meta" style="display: flex; justify-content: space-between; margin-bottom: 30px; font-size: 12px;">
-              <div>
-                <p style="margin: 0; color: #666;">Reference: <span style="color: #333; font-weight: 500;">EMP-{{candidateId}}-{{year}}</span></p>
-              </div>
-              <div style="text-align: right;">
-                <p style="margin: 0; color: #666;">Date: <span style="color: #333; font-weight: 500;">{{currentDate}}</span></p>
-              </div>
-            </div>
-
-            <div class="recipient-address" style="margin-bottom: 40px; font-size: 14px; line-height: 1.8;">
-              <p style="margin: 0;">
-                <span class="placeholder" style="font-weight: 600;">{{candidateName}}</span><br>
-                <span class="placeholder">{{candidateAddress}}</span>
-              </p>
-            </div>
-
-            <div class="subject-line" style="margin-bottom: 30px;">
-              <p style="margin: 0; font-weight: 600; color: #2f4f4f; text-decoration: underline; font-size: 16px;">Subject: Formal Offer of Employment</p>
-            </div>
-
-            <div class="body-section">
-              <div class="salutation" style="margin-bottom: 25px;">
-                <p style="margin: 0; font-size: 16px;">Dear <span class="placeholder" style="font-weight: 600;">{{candidateName}}</span>,</p>
-              </div>
-
-              <div class="main-content" style="text-align: justify; font-size: 14px; line-height: 1.8; color: #333;">
-                <p style="margin-bottom: 20px; text-indent: 30px;">
-                  We are pleased to extend to you a formal offer of employment for the position of
-                  <span class="placeholder" style="font-weight: 600; font-style: italic;">{{jobRole}}</span> within our esteemed organization.
-                  This letter serves as our formal commitment to the terms and conditions outlined herein.
-                </p>
-
-                <p style="margin-bottom: 20px; text-indent: 30px;">
-                  Your commencement date shall be <span class="placeholder" style="font-weight: 600;">{{joiningDate}}</span>,
-                  whereupon you shall report to <span class="placeholder" style="font-weight: 600;">{{reportingManager}}</span>
-                  at our <span class="placeholder">{{workLocation}}</span> facility.
-                </p>
-
-                <div class="compensation-section" style="margin: 40px 0; padding: 30px; background: #faf9f6; border: 2px solid #d4af37; border-radius: 8px;">
-                  <h3 style="color: #2f4f4f; margin: 0 0 25px 0; text-align: center; font-size: 20px; font-family: 'Garamond', serif; border-bottom: 1px solid #d4af37; padding-bottom: 10px;">Compensation & Remuneration</h3>
-
-                  <div class="salary-highlight" style="text-align: center; margin-bottom: 30px; padding: 20px; background: linear-gradient(135deg, #d4af37 0%, #b8860b 100%); color: white; border-radius: 6px;">
-                    <p style="margin: 0 0 5px 0; font-size: 14px; opacity: 0.9;">Annual Gross Compensation</p>
-                    <p style="margin: 0; font-size: 32px; font-weight: bold; font-family: 'Garamond', serif;">₹<span class="placeholder">{{totalSalary}}</span></p>
-                  </div>
-
-                  <table style="width: 100%; border-collapse: collapse; font-size: 13px;">
-                    <thead>
-                      <tr style="background: #2f4f4f; color: white;">
-                        <th style="border: 1px solid #d4af37; padding: 15px; text-align: left; font-weight: 600; font-family: 'Garamond', serif;">Salary Component</th>
-                        <th style="border: 1px solid #d4af37; padding: 15px; text-align: right; font-weight: 600; font-family: 'Garamond', serif;">Monthly Amount</th>
-                        <th style="border: 1px solid #d4af37; padding: 15px; text-align: right; font-weight: 600; font-family: 'Garamond', serif;">Annual Amount</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr style="background: #faf9f6;">
-                        <td style="border: 1px solid #d4af37; padding: 15px; font-weight: 500;">Basic Salary</td>
-                        <td style="border: 1px solid #d4af37; padding: 15px; text-align: right; font-weight: 600;">₹<span class="placeholder">{{basicMonthly}}</span></td>
-                        <td style="border: 1px solid #d4af37; padding: 15px; text-align: right; font-weight: 600;">₹<span class="placeholder">{{basicSalary}}</span></td>
-                      </tr>
-                      <tr>
-                        <td style="border: 1px solid #d4af37; padding: 15px; font-weight: 500;">House Rent Allowance</td>
-                        <td style="border: 1px solid #d4af37; padding: 15px; text-align: right; font-weight: 600;">₹<span class="placeholder">{{hraMonthly}}</span></td>
-                        <td style="border: 1px solid #d4af37; padding: 15px; text-align: right; font-weight: 600;">₹<span class="placeholder">{{hra}}</span></td>
-                      </tr>
-                      <tr style="background: #faf9f6;">
-                        <td style="border: 1px solid #d4af37; padding: 15px; font-weight: 500;">Conveyance Allowance</td>
-                        <td style="border: 1px solid #d4af37; padding: 15px; text-align: right; font-weight: 600;">₹<span class="placeholder">{{conveyanceMonthly}}</span></td>
-                        <td style="border: 1px solid #d4af37; padding: 15px; text-align: right; font-weight: 600;">₹<span class="placeholder">{{conveyance}}</span></td>
-                      </tr>
-                      <tr>
-                        <td style="border: 1px solid #d4af37; padding: 15px; font-weight: 500;">LTA & Other Benefits</td>
-                        <td style="border: 1px solid #d4af37; padding: 15px; text-align: right; font-weight: 600;">₹<span class="placeholder">{{otherMonthly}}</span></td>
-                        <td style="border: 1px solid #d4af37; padding: 15px; text-align: right; font-weight: 600;">₹<span class="placeholder">{{otherBenefits}}</span></td>
-                      </tr>
-                      <tr style="background: #2f4f4f; color: white; font-weight: bold;">
-                        <td style="border: 1px solid #d4af37; padding: 15px; font-weight: bold; font-family: 'Garamond', serif;">Total Compensation</td>
-                        <td style="border: 1px solid #d4af37; padding: 15px; text-align: right; font-weight: bold; font-family: 'Garamond', serif;">₹<span class="placeholder">{{totalMonthly}}</span></td>
-                        <td style="border: 1px solid #d4af37; padding: 15px; text-align: right; font-weight: bold; font-family: 'Garamond', serif;">₹<span class="placeholder">{{totalSalary}}</span></td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-
-                <div class="benefits-section" style="margin: 30px 0;">
-                  <h4 style="color: #2f4f4f; margin-bottom: 15px; font-size: 16px; font-family: 'Garamond', serif;">Additional Benefits & Perquisites</h4>
-                  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px;">
-                    <div style="background: #faf9f6; padding: 15px; border: 1px solid #d4af37; border-radius: 4px;">
-                      <h5 style="margin: 0 0 10px 0; color: #2f4f4f; font-size: 14px;">Health & Insurance</h5>
-                      <ul style="margin: 0; padding-left: 20px; font-size: 13px; line-height: 1.6;">
-                        <li>Comprehensive Health Insurance</li>
-                        <li>Personal Accident Coverage</li>
-                        <li>Term Life Insurance</li>
-                      </ul>
-                    </div>
-                    <div style="background: #faf9f6; padding: 15px; border: 1px solid #d4af37; border-radius: 4px;">
-                      <h5 style="margin: 0 0 10px 0; color: #2f4f4f; font-size: 14px;">Leave & Time Off</h5>
-                      <ul style="margin: 0; padding-left: 20px; font-size: 13px; line-height: 1.6;">
-                        <li>24 days Annual Leave</li>
-                        <li>12 days Sick Leave</li>
-                        <li>Maternity/Paternity Leave</li>
-                      </ul>
-                    </div>
-                    <div style="background: #faf9f6; padding: 15px; border: 1px solid #d4af37; border-radius: 4px;">
-                      <h5 style="margin: 0 0 10px 0; color: #2f4f4f; font-size: 14px;">Professional Development</h5>
-                      <ul style="margin: 0; padding-left: 20px; font-size: 13px; line-height: 1.6;">
-                        <li>Training & Development Budget</li>
-                        <li>Conference Attendance</li>
-                        <li>Certification Support</li>
-                      </ul>
-                    </div>
-                  </div>
-                </div>
-
-                <p style="margin-bottom: 20px; text-indent: 30px;">
-                  This offer is contingent upon satisfactory reference checks and background verification.
-                  Should you accept this offer, please sign and return this letter by
-                  <span class="placeholder" style="font-weight: 600;">{{offerExpiryDate}}</span>.
-                </p>
-
-                <p style="margin-bottom: 20px; text-indent: 30px;">
-                  We look forward to welcoming you to the {{companyName}} family and embarking on this exciting journey together.
-                </p>
-              </div>
-            </div>
-
-            <div class="footer-section" style="margin-top: 60px;">
-              <div class="closing" style="margin-bottom: 40px;">
-                <p style="margin: 0; font-weight: 500;">Yours sincerely,</p>
-              </div>
-
-              <div class="signature-section" style="display: flex; justify-content: space-between; align-items: flex-end;">
-                <div class="candidate-signature" style="flex: 1;">
-                  <p style="margin-bottom: 50px; font-weight: 500; font-size: 14px;">Accepted by:</p>
-                  <div style="border-bottom: 1px solid #2f4f4f; width: 250px; margin-bottom: 5px;"></div>
-                  <p style="margin: 0; font-size: 12px; color: #666;"><span class="placeholder">{{candidateName}}</span></p>
-                  <p style="margin: 0; font-size: 12px; color: #666;">Date: ________________</p>
-                </div>
-
-                <div class="company-signature" style="flex: 1; text-align: center;">
-                  <div style="width: 200px; height: 80px; border-bottom: 2px solid #2f4f4f; margin: 0 auto 10px auto;"></div>
-                  <p style="margin: 0; font-weight: 600; color: #2f4f4f; font-family: 'Garamond', serif;"><span class="placeholder">{{hrName}}</span></p>
-                  <p style="margin: 0; font-size: 13px; color: #666;"><span class="placeholder">{{hrPosition}}</span></p>
-                  <p style="margin: 0; font-size: 13px; color: #666;">{{companyName}}</p>
-                  <p style="margin: 0; font-size: 12px; color: #666;">Contact: +1 (555) 123-4567</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        `,
-        css: `
-          .elegant-professional {
-            font-family: 'Times New Roman', serif;
-            font-size: 13px;
-            line-height: 1.7;
-            color: #333;
-            max-width: 850px;
-            margin: 0 auto;
-          }
-          .elegant-professional .placeholder {
-            background: #f5f5dc;
-            border: 1px dashed #8b4513;
-            padding: 2px 4px;
-            border-radius: 2px;
-            color: #8b4513;
-            font-weight: 500;
-          }
-        `
-      },
-      4: { // Tech Startup
-        html: `
-          <div class="offer-letter tech-startup">
-            <div class="header-section" style="text-align: center; margin-bottom: 40px; padding: 30px; background: linear-gradient(135deg, #ff6b6b 0%, #4ecdc4 100%); border-radius: 15px; color: white;">
-              <div class="logo-container" style="margin-bottom: 20px;">
-                <div style="width: 100px; height: 100px; background: rgba(255,255,255,0.2); border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 36px; font-weight: bold; backdrop-filter: blur(10px);">
-                  {{companyInitials}}
-                </div>
-              </div>
-              <h1 style="margin: 0; font-size: 36px; font-weight: 700; letter-spacing: -2px; text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">{{companyName}}</h1>
-              <p style="margin: 10px 0 0 0; font-size: 16px; opacity: 0.9; font-weight: 300;">Building the future, one innovation at a time</p>
-            </div>
-
-            <div class="quick-info" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 40px;">
-              <div class="info-card" style="background: #f8f9fa; padding: 20px; border-radius: 10px; border-left: 5px solid #ff6b6b; text-align: center;">
-                <div style="font-size: 24px; margin-bottom: 5px;">🎯</div>
-                <div style="font-size: 14px; color: #666; margin-bottom: 5px;">Position</div>
-                <div style="font-size: 16px; font-weight: 600; color: #333;"><span class="placeholder">{{jobRole}}</span></div>
-              </div>
-              <div class="info-card" style="background: #f8f9fa; padding: 20px; border-radius: 10px; border-left: 5px solid #4ecdc4; text-align: center;">
-                <div style="font-size: 24px; margin-bottom: 5px;">📅</div>
-                <div style="font-size: 14px; color: #666; margin-bottom: 5px;">Start Date</div>
-                <div style="font-size: 16px; font-weight: 600; color: #333;"><span class="placeholder">{{joiningDate}}</span></div>
-              </div>
-              <div class="info-card" style="background: #f8f9fa; padding: 20px; border-radius: 10px; border-left: 5px solid #45b7d1; text-align: center;">
-                <div style="font-size: 24px; margin-bottom: 5px;">💰</div>
-                <div style="font-size: 14px; color: #666; margin-bottom: 5px;">Annual Package</div>
-                <div style="font-size: 16px; font-weight: 600; color: #333;">₹<span class="placeholder">{{totalSalary}}</span></div>
-              </div>
-              <div class="info-card" style="background: #f8f9fa; padding: 20px; border-radius: 10px; border-left: 5px solid #f9ca24; text-align: center;">
-                <div style="font-size: 24px; margin-bottom: 5px;">📍</div>
-                <div style="font-size: 14px; color: #666; margin-bottom: 5px;">Location</div>
-                <div style="font-size: 16px; font-weight: 600; color: #333;"><span class="placeholder">{{workLocation}}</span></div>
-              </div>
-            </div>
-
-            <div class="body-section">
-              <div class="greeting" style="margin-bottom: 30px;">
-                <p style="margin: 0; font-size: 20px; color: #333; font-weight: 500;">Hey <span class="placeholder" style="color: #ff6b6b; font-weight: 600;">{{candidateName}}</span>! 👋</p>
-              </div>
-
-              <div class="main-content" style="font-size: 16px; line-height: 1.7; color: #444;">
-                <p style="margin-bottom: 25px;">
-                  We're absolutely thrilled that you're considering joining our awesome team at {{companyName}}!
-                  After reviewing your incredible background and experience, we're confident you'll be a perfect fit
-                  for our <span class="placeholder" style="font-weight: 600; color: #ff6b6b;">{{jobRole}}</span> position.
-                </p>
-
-                <div class="excited-section" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; border-radius: 15px; margin: 30px 0; text-align: center;">
-                  <h3 style="margin: 0 0 15px 0; font-size: 24px;">🎉 Welcome to the Team! 🎉</h3>
-                  <p style="margin: 0; font-size: 18px; opacity: 0.9;">Your journey with us starts on <span class="placeholder" style="font-weight: 600;">{{joiningDate}}</span></p>
-                </div>
-
-                <div class="compensation-section" style="margin: 40px 0;">
-                  <h4 style="color: #333; margin-bottom: 20px; font-size: 20px; display: flex; align-items: center;">
-                    💰 Your Compensation Package
-                  </h4>
-
-                  <div class="salary-breakdown" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 30px;">
-                    <div class="salary-card" style="background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%); padding: 25px; border-radius: 12px; text-align: center; color: white;">
-                      <div style="font-size: 14px; opacity: 0.9; margin-bottom: 10px;">Basic Salary</div>
-                      <div style="font-size: 28px; font-weight: 700;">₹<span class="placeholder">{{basicSalary}}</span></div>
-                      <div style="font-size: 12px; opacity: 0.8;">per annum</div>
-                    </div>
-                    <div class="salary-card" style="background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%); padding: 25px; border-radius: 12px; text-align: center; color: #333;">
-                      <div style="font-size: 14px; opacity: 0.7; margin-bottom: 10px;">HRA</div>
-                      <div style="font-size: 28px; font-weight: 700; color: #ff6b6b;">₹<span class="placeholder">{{hra}}</span></div>
-                      <div style="font-size: 12px; opacity: 0.6;">per annum</div>
-                    </div>
-                    <div class="salary-card" style="background: linear-gradient(135deg, #d299c2 0%, #fef9d7 100%); padding: 25px; border-radius: 12px; text-align: center; color: #333;">
-                      <div style="font-size: 14px; opacity: 0.7; margin-bottom: 10px;">Conveyance</div>
-                      <div style="font-size: 28px; font-weight: 700; color: #4ecdc4;">₹<span class="placeholder">{{conveyance}}</span></div>
-                      <div style="font-size: 12px; opacity: 0.6;">per annum</div>
-                    </div>
-                  </div>
-
-                  <div class="total-comp" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; border-radius: 15px; text-align: center; margin: 20px 0;">
-                    <div style="font-size: 16px; opacity: 0.9; margin-bottom: 10px;">Your Total Annual Compensation</div>
-                    <div style="font-size: 48px; font-weight: 900; text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">₹<span class="placeholder">{{totalSalary}}</span></div>
-                  </div>
-                </div>
-
-                <div class="perks-section" style="margin: 40px 0;">
-                  <h4 style="color: #333; margin-bottom: 20px; font-size: 20px; display: flex; align-items: center;">
-                    🎁 Amazing Perks & Benefits
-                  </h4>
-
-                  <div class="perks-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
-                    <div class="perk-item" style="background: #f8f9fa; padding: 20px; border-radius: 10px; border-left: 5px solid #ff6b6b; display: flex; align-items: center;">
-                      <span style="font-size: 24px; margin-right: 15px;">🏥</span>
-                      <div>
-                        <div style="font-weight: 600; color: #333;">Health Insurance</div>
-                        <div style="font-size: 12px; color: #666;">Comprehensive coverage</div>
-                      </div>
-                    </div>
-                    <div class="perk-item" style="background: #f8f9fa; padding: 20px; border-radius: 10px; border-left: 5px solid #4ecdc4; display: flex; align-items: center;">
-                      <span style="font-size: 24px; margin-right: 15px;">🏖️</span>
-                      <div>
-                        <div style="font-weight: 600; color: #333;">Unlimited PTO</div>
-                        <div style="font-size: 12px; color: #666;">Take time when you need it</div>
-                      </div>
-                    </div>
-                    <div class="perk-item" style="background: #f8f9fa; padding: 20px; border-radius: 10px; border-left: 5px solid #45b7d1; display: flex; align-items: center;">
-                      <span style="font-size: 24px; margin-right: 15px;">📚</span>
-                      <div>
-                        <div style="font-weight: 600; color: #333;">Learning Budget</div>
-                        <div style="font-size: 12px; color: #666;">$2000 for courses & books</div>
-                      </div>
-                    </div>
-                    <div class="perk-item" style="background: #f8f9fa; padding: 20px; border-radius: 10px; border-left: 5px solid #f9ca24; display: flex; align-items: center;">
-                      <span style="font-size: 24px; margin-right: 15px;">🏠</span>
-                      <div>
-                        <div style="font-weight: 600; color: #333;">Remote Work</div>
-                        <div style="font-size: 12px; color: #666;">Work from anywhere</div>
-                      </div>
-                    </div>
-                    <div class="perk-item" style="background: #f8f9fa; padding: 20px; border-radius: 10px; border-left: 5px solid #ff9ff3; display: flex; align-items: center;">
-                      <span style="font-size: 24px; margin-right: 15px;">🍕</span>
-                      <div>
-                        <div style="font-weight: 600; color: #333;">Free Lunch</div>
-                        <div style="font-size: 12px; color: #666;">Daily team meals</div>
-                      </div>
-                    </div>
-                    <div class="perk-item" style="background: #f8f9fa; padding: 20px; border-radius: 10px; border-left: 5px solid #54a0ff; display: flex; align-items: center;">
-                      <span style="font-size: 24px; margin-right: 15px;">🎮</span>
-                      <div>
-                        <div style="font-weight: 600; color: #333;">Game Room</div>
-                        <div style="font-size: 12px; color: #666;">Foosball, ping pong & more</div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="next-steps" style="background: #e8f4f8; padding: 25px; border-radius: 10px; border-left: 5px solid #4ecdc4; margin: 30px 0;">
-                  <h4 style="margin: 0 0 15px 0; color: #333; display: flex; align-items: center;">
-                    🚀 Next Steps
-                  </h4>
-                  <ol style="margin: 0; padding-left: 20px; color: #555;">
-                    <li style="margin-bottom: 8px;">Sign and return this offer letter by <span class="placeholder" style="font-weight: 600;">{{offerExpiryDate}}</span></li>
-                    <li style="margin-bottom: 8px;">Complete background verification process</li>
-                    <li style="margin-bottom: 8px;">Set up your workstation and accounts</li>
-                    <li>Welcome to the team! 🎊</li>
-                  </ol>
-                </div>
-
-                <p style="margin-bottom: 25px; font-size: 16px;">
-                  We're beyond excited to have you join our mission to <span class="placeholder">{{companyMission}}</span>.
-                  This is just the beginning of an amazing journey together!
-                </p>
-
-                <p style="margin-bottom: 25px; font-size: 16px;">
-                  Questions? Reach out to <span class="placeholder" style="font-weight: 600;">{{hrName}}</span> anytime.
-                  We're here to make your onboarding as smooth as possible.
-                </p>
-              </div>
-            </div>
-
-            <div class="footer-section" style="margin-top: 50px; text-align: center;">
-              <div class="signature-section" style="display: inline-block; text-align: center;">
-                <p style="margin-bottom: 20px; font-size: 18px; color: #333; font-weight: 500;">Can't wait to work with you! 🤝</p>
-
-                <div style="width: 250px; height: 80px; border-bottom: 3px solid #ff6b6b; margin: 0 auto 15px auto; border-radius: 2px;"></div>
-
-                <p style="margin: 0; font-size: 18px; font-weight: 700; color: #333;"><span class="placeholder">{{hrName}}</span></p>
-                <p style="margin: 0; font-size: 14px; color: #666;"><span class="placeholder">{{hrPosition}}</span></p>
-                <p style="margin: 0; font-size: 14px; color: #666;">{{companyName}}</p>
-                <p style="margin: 0; font-size: 12px; color: #999;">📧 hr@company.com | 📱 +1 (555) 123-4567</p>
-
-                <div class="social-links" style="margin-top: 20px;">
-                  <span style="margin: 0 10px; font-size: 20px;">📘</span>
-                  <span style="margin: 0 10px; font-size: 20px;">🐦</span>
-                  <span style="margin: 0 10px; font-size: 20px;">💼</span>
-                  <span style="margin: 0 10px; font-size: 20px;">🌐</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        `,
-        css: `
-          .tech-startup {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            font-size: 16px;
-            line-height: 1.6;
-            color: #333;
-            max-width: 900px;
-            margin: 0 auto;
-          }
-          .tech-startup .placeholder {
-            background: #fff3cd;
-            border: 2px dashed #ffc107;
-            padding: 3px 8px;
-            border-radius: 6px;
-            color: #856404;
-            font-weight: 600;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-          }
-        `
-      }
-    };
-
-    return templates[templateId] || templates[1];
   }
 }
 
